@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="WEALTHZY — Intelligent wealth research, portfolio intelligence and financial planning.">
+<title>WEALTHZY — Intelligent Wealth</title>
+<link rel="icon" type="image/png" href="FullLogo_Transparent.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  /* ================= TOKENS ================= */
+  :root{
+    --bg:#05080D;
+    --surface:#0A0F17;
+    --surface2:#0E1520;
+    --panel:#111923;
+    --line:#1B2533;
+    --line-soft:rgba(255,255,255,.06);
+    --text:#F4F7FA;
+    --muted:#8995A5;
+    --muted-dim:#5E6B7C;
+    --gold:#D6B36A;
+    --gold2:#B89146;
+    --green:#34D399;
+    --green-bg:rgba(52,211,153,.12);
+    --amber:#F5C97B;
+    --amber-bg:rgba(245,201,123,.12);
+    --red:#F3897E;
+    --red-bg:rgba(243,137,126,.12);
+    --radius-lg:26px;
+    --radius-md:18px;
+    --radius-sm:12px;
+    --shadow-card:0 20px 60px rgba(0,0,0,.35);
+    --shadow-glow:0 0 80px rgba(214,179,106,.10);
+    --container:1180px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'DM Sans',Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.55;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4,.display{ font-family:'Manrope',Arial,sans-serif; margin:0; color:#fff; }
+  p{margin:0;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  button{font-family:inherit; cursor:pointer;}
+  ul{margin:0; padding:0;}
+  .wrap{max-width:var(--container); margin:0 auto; padding:0 clamp(16px,4vw,32px);}
+  section{padding:clamp(56px,8vw,104px) 0;}
+
+  .noise{
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+  }
+  .grid-lines{
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size:48px 48px;
+    -webkit-mask-image:linear-gradient(to bottom, black, transparent 85%);
+    mask-image:linear-gradient(to bottom, black, transparent 85%);
+  }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--gold);
+  }
+  .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold); box-shadow:0 0 10px var(--gold);}
+
+  .h2{ font-size:clamp(28px,4.2vw,44px); font-weight:700; letter-spacing:-.02em; line-height:1.15; color:#fff; }
+  .lead{ color:var(--muted); font-size:clamp(14.5px,1.6vw,16.5px); line-height:1.75; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    border-radius:999px; font-weight:700; font-size:14px;
+    padding:14px 26px; border:1px solid transparent; transition:.2s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{ background:var(--gold); color:#0A0F17; box-shadow:0 12px 30px rgba(214,179,106,.18); }
+  .btn-primary:hover{ background:#E2C47D; transform:translateY(-2px); }
+  .btn-outline{ background:rgba(255,255,255,.03); color:#fff; border-color:var(--line-soft); }
+  .btn-outline:hover{ border-color:rgba(255,255,255,.2); background:rgba(255,255,255,.06); }
+  .btn-sm{ padding:10px 20px; font-size:13px; }
+  .btn-block{ width:100%; }
+
+  /* ================= REVEAL ================= */
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.show{ opacity:1; transform:translateY(0); }
+  @media(prefers-reduced-motion: reduce){
+    *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+  }
+
+  /* ================= HEADER ================= */
+  #navbar{
+    position:fixed; inset:0 0 auto 0; z-index:50;
+    background:rgba(5,8,13,.72); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--line-soft);
+    transition:box-shadow .25s ease;
+  }
+  #navbar.scrolled{ box-shadow:0 10px 40px rgba(0,0,0,.35); }
+  .nav-inner{
+    max-width:var(--container); margin:0 auto; padding:0 clamp(16px,4vw,32px);
+    height:72px; display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .logo{ display:flex; align-items:center; gap:8px; font-family:'Manrope',sans-serif; font-weight:800; font-size:19px; color:#fff; letter-spacing:-.01em; }
+  .logo .dot{ width:9px; height:9px; border-radius:3px; background:var(--gold); box-shadow:0 0 10px var(--gold); display:inline-block; }
+  nav.main-nav{ display:none; align-items:center; gap:30px; }
+  nav.main-nav a{ font-size:14px; font-weight:600; color:var(--muted); transition:color .2s ease; }
+  nav.main-nav a:hover{ color:#fff; }
+  @media(min-width:860px){ nav.main-nav{ display:flex; } }
+
+  .nav-actions{ display:flex; align-items:center; gap:10px; }
+  .menu-toggle{
+    display:flex; width:40px; height:40px; align-items:center; justify-content:center;
+    border-radius:10px; border:1px solid var(--line-soft); background:rgba(255,255,255,.02); color:#fff;
+  }
+  @media(min-width:860px){ .menu-toggle{ display:none; } }
+  .menu-toggle svg{ width:18px; height:18px; }
+
+  #mobileMenu{
+    display:none; flex-direction:column; gap:2px;
+    border-top:1px solid var(--line-soft); padding:10px clamp(16px,4vw,32px) 18px; background:var(--surface);
+  }
+  #mobileMenu a{ padding:12px 8px; font-size:14px; font-weight:600; color:var(--text); border-radius:10px; }
+  #mobileMenu a:hover{ background:rgba(255,255,255,.04); }
+  @media(min-width:860px){ #mobileMenu{ display:none !important; } }
+
+  /* ================= HERO ================= */
+  .hero{
+    position:relative; overflow:hidden;
+    padding:clamp(120px,18vw,180px) 0 0;
+    border-bottom:1px solid var(--line-soft);
+    background:
+      radial-gradient(circle at 50% 0%, rgba(214,179,106,.13), transparent 32%),
+      radial-gradient(circle at 8% 45%, rgba(56,96,138,.12), transparent 28%),
+      radial-gradient(circle at 92% 50%, rgba(56,96,138,.10), transparent 28%),
+      var(--bg);
+  }
+  .hero::before{ content:""; position:absolute; inset:0; z-index:0; }
+  .hero-glowspot{
+    position:absolute; left:50%; top:120px; width:420px; height:420px; max-width:80vw;
+    transform:translateX(-50%); border-radius:50%; background:rgba(214,179,106,.05); filter:blur(100px);
+    pointer-events:none;
+  }
+  .hero-inner{ position:relative; z-index:1; max-width:900px; margin:0 auto; text-align:center; padding:0 clamp(16px,4vw,32px) 56px; }
+  .hero h1{
+    margin-top:22px; font-size:clamp(34px,7vw,84px); font-weight:700; letter-spacing:-.045em; line-height:1.05; color:#fff;
+  }
+  .hero h1 .accent{
+    background:linear-gradient(90deg,#fff,rgba(255,255,255,.55));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.lead{ max-width:600px; margin:22px auto 0; font-size:clamp(15px,1.8vw,18px); }
+  .hero-ctas{ display:flex; flex-direction:column; gap:12px; justify-content:center; margin-top:34px; }
+  @media(min-width:560px){ .hero-ctas{ flex-direction:row; } }
+  .hero-note{ margin-top:22px; font-size:12px; color:var(--muted-dim); }
+
+  .hero-card{ position:relative; z-index:1; max-width:960px; margin:0 auto; padding:0 clamp(16px,4vw,32px); }
+  .hero-card-inner{
+    background:#080D14; border:1px solid var(--line-soft); border-radius:28px; padding:8px;
+    box-shadow:0 40px 120px rgba(0,0,0,.5);
+  }
+  .hero-card-panel{ background:var(--surface); border-radius:22px; padding:clamp(18px,4vw,32px); border:1px solid var(--line-soft); }
+  .hero-card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+  .hero-card-head .tag{ font-size:10px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); }
+  .hero-card-head .sub{ margin-top:4px; font-size:13px; color:var(--muted); }
+  .status-chip{
+    display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px;
+    background:var(--green-bg); color:var(--green); font-size:11px; font-weight:600;
+    border:1px solid rgba(52,211,153,.2);
+  }
+  .status-chip .dot{ width:6px; height:6px; border-radius:50%; background:var(--green); }
+
+  .metric-grid{ display:grid; gap:12px; grid-template-columns:1fr; }
+  @media(min-width:640px){ .metric-grid{ grid-template-columns:repeat(3,1fr); } }
+  .metric-card{ background:rgba(255,255,255,.025); border:1px solid var(--line-soft); border-radius:16px; padding:18px; }
+  .metric-card .k{ font-size:12px; color:var(--muted); }
+  .metric-card .v{ margin-top:10px; font-size:26px; font-weight:700; color:#fff; }
+  .metric-card .v small{ font-size:13px; color:var(--muted); font-weight:500; }
+  .bar-track{ margin-top:12px; height:6px; border-radius:999px; background:rgba(255,255,255,.06); overflow:hidden; }
+  .bar-fill{ height:100%; background:var(--gold); border-radius:999px; }
+  .metric-card .badge-ok{ margin-top:8px; font-size:12px; color:var(--green); }
+
+  /* ================= STAT STRIP ================= */
+  .stat-strip{ background:var(--surface); border-bottom:1px solid var(--line-soft); padding:34px 0; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:26px 12px; text-align:center; }
+  @media(min-width:768px){ .stat-grid{ grid-template-columns:repeat(4,1fr); } }
+  .stat-grid .num{
+    font-family:'Manrope',sans-serif; font-size:clamp(22px,4vw,32px); font-weight:800;
+    background:linear-gradient(180deg,#fff,#9DA8B5); -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .stat-grid .lbl{ margin-top:6px; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+
+  /* ================= SECTION HEAD ================= */
+  .section-head{ max-width:640px; }
+  .section-head.center{ margin:0 auto; text-align:center; }
+  .section-head h2{ margin-top:14px; }
+  .section-head p{ margin-top:16px; }
+
+  /* ================= FEATURE GRID ================= */
+  .feature-grid{ margin-top:44px; display:grid; grid-template-columns:1fr; gap:16px; }
+  @media(min-width:640px){ .feature-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media(min-width:1024px){ .feature-grid{ grid-template-columns:repeat(4,1fr); } }
+  .feature-card{
+    background:linear-gradient(145deg, rgba(16,23,34,.92), rgba(8,12,18,.96));
+    border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:26px; transition:transform .3s ease, border-color .3s ease, background .3s ease;
+  }
+  .feature-card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(214,179,106,.28);
+    background:linear-gradient(145deg, rgba(19,28,41,.98), rgba(9,14,21,.98));
+  }
+  .feature-icon{
+    width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    background:rgba(214,179,106,.06); border:1px solid rgba(214,179,106,.18); color:var(--gold); font-size:20px;
+  }
+  .feature-card .num{ margin-top:22px; font-size:11px; font-weight:800; letter-spacing:.16em; color:var(--gold); }
+  .feature-card h3{ margin-top:8px; font-size:18px; }
+  .feature-card p{ margin-top:8px; font-size:14px; color:var(--muted); line-height:1.65; }
+
+  /* ================= INTELLIGENCE ================= */
+  .split{ display:grid; grid-template-columns:1fr; gap:44px; align-items:center; }
+  @media(min-width:960px){ .split{ grid-template-columns:1fr 1fr; gap:64px; } }
+  .step-row{ display:flex; gap:14px; padding:16px; border:1px solid var(--line-soft); border-radius:14px; background:rgba(255,255,255,.02); }
+  .step-row + .step-row{ margin-top:12px; }
+  .step-num{ font-weight:800; color:var(--gold); font-size:14px; }
+  .step-row h4{ font-size:15px; color:#fff; }
+  .step-row p{ margin-top:4px; font-size:13.5px; color:var(--muted); }
+
+  .insight-card{
+    background:var(--surface2); border:1px solid rgba(214,179,106,.2); border-radius:var(--radius-lg);
+    padding:clamp(20px,4vw,32px); box-shadow:var(--shadow-glow);
+  }
+  .insight-head{ display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line-soft); padding-bottom:18px; }
+  .insight-head .tag{ font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); }
+  .insight-head .sub{ margin-top:4px; font-size:13px; color:var(--muted); }
+  .insight-dot{ width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 14px var(--gold); }
+  .insight-body p{ margin-top:22px; font-size:14.5px; line-height:1.8; color:rgba(244,247,250,.72); }
+  .insight-mini{ margin-top:22px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .insight-mini .box{ background:rgba(0,0,0,.15); border:1px solid var(--line-soft); border-radius:14px; padding:14px; }
+  .insight-mini .box .k{ font-size:10px; color:var(--muted); }
+  .insight-mini .box .v{ margin-top:8px; font-weight:700; color:#fff; }
+  .insight-reco{ margin-top:22px; border:1px solid rgba(214,179,106,.15); background:rgba(214,179,106,.05); border-radius:14px; padding:14px; }
+  .insight-reco .tag{ font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); }
+  .insight-reco p{ margin-top:6px; font-size:13.5px; color:rgba(244,247,250,.7); }
+
+  /* ================= TRUST ROW ================= */
+  .trust-row{ margin-top:44px; display:grid; grid-template-columns:1fr; gap:14px; }
+  @media(min-width:640px){ .trust-row{ grid-template-columns:repeat(3,1fr); } }
+  .trust-item{ display:flex; gap:14px; align-items:flex-start; padding:20px; border:1px solid var(--line); border-radius:16px; background:var(--panel); }
+  .trust-item .ic{
+    width:38px; height:38px; flex:none; border-radius:10px; background:rgba(214,179,106,.08);
+    border:1px solid rgba(214,179,106,.18); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:16px;
+  }
+  .trust-item h4{ font-size:14.5px; color:#fff; }
+  .trust-item p{ margin-top:4px; font-size:13px; color:var(--muted); }
+
+  /* ================= ABOUT ================= */
+  .about-section{ text-align:center; position:relative; overflow:hidden; }
+  .about-glow{
+    position:absolute; left:50%; top:50%; width:500px; height:500px; max-width:90vw;
+    transform:translate(-50%,-50%); border-radius:50%; background:rgba(214,179,106,.035); filter:blur(100px);
+    pointer-events:none;
+  }
+  .about-section .h2{ max-width:760px; margin:14px auto 0; font-size:clamp(28px,5vw,58px); }
+  .about-section .lead{ max-width:620px; margin:18px auto 0; }
+  .gold-rule{ width:120px; height:1px; margin:36px auto 0; background:linear-gradient(90deg,transparent,var(--gold),transparent); opacity:.6; }
+
+  /* ================= CTA ================= */
+  .cta-section{ background:var(--surface); }
+  .cta-card{
+    max-width:860px; margin:0 auto; text-align:center; border-radius:32px;
+    border:1px solid rgba(214,179,106,.15);
+    background:linear-gradient(145deg,#111923,#080C12);
+    color:#fff; padding:clamp(40px,7vw,72px) clamp(20px,5vw,56px);
+    box-shadow:var(--shadow-glow);
+  }
+  .cta-card .eyebrow{ justify-content:center; }
+  .cta-card h2{ margin-top:14px; color:#fff; font-size:clamp(28px,5vw,48px); }
+  .cta-card p{ margin-top:14px; color:var(--muted); font-size:15px; max-width:460px; margin-left:auto; margin-right:auto; }
+
+  .waitlist-form{ margin-top:32px; max-width:520px; margin-left:auto; margin-right:auto; }
+  .form-row{ display:flex; flex-direction:column; gap:10px; }
+  @media(min-width:560px){ .form-row{ flex-direction:row; align-items:flex-start; } }
+  .field{ flex:1; min-width:0; text-align:left; }
+  .field input{
+    width:100%; padding:14px 18px; border-radius:999px; border:1px solid var(--line-soft);
+    background:rgba(0,0,0,.25); color:#fff; font-size:14px; outline:none; transition:border-color .2s ease;
+  }
+  .field input::placeholder{ color:rgba(255,255,255,.28); }
+  .field input:focus{ border-color:rgba(214,179,106,.6); }
+  .field input.input-error{ border-color:var(--red) !important; }
+  .field-error{ display:none; margin-top:8px; padding:0 6px; font-size:12px; color:var(--red); text-align:left; }
+  .field-error.show{ display:block; }
+  .waitlist-form .btn{ width:100%; flex:none; }
+  @media(min-width:560px){ .waitlist-form .btn{ width:auto; } }
+  #inlineSuccessMsg{ display:none; margin-top:16px; font-size:14px; color:var(--gold); }
+  #inlineSuccessMsg.show{ display:block; }
+
+  /* ================= FOOTER ================= */
+  footer{ background:var(--bg); color:var(--muted); padding:56px 0 28px; border-top:1px solid var(--line-soft); }
+  .footer-top{ display:grid; grid-template-columns:1fr; gap:36px; padding-bottom:36px; border-bottom:1px solid var(--line-soft); }
+  @media(min-width:640px){ .footer-top{ grid-template-columns:1.4fr 1fr 1fr; } }
+  @media(min-width:960px){ .footer-top{ grid-template-columns:1.4fr 1fr 1fr 1fr; } }
+  .footer-brand .logo{ color:#fff; }
+  .footer-brand p{ margin-top:14px; font-size:13.5px; color:var(--muted-dim); max-width:260px; }
+  .footer-col h5{ font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin-bottom:14px; }
+  .footer-col ul{ list-style:none; display:flex; flex-direction:column; gap:10px; }
+  .footer-col a{ font-size:13.5px; color:var(--muted); transition:color .2s ease; }
+  .footer-col a:hover{ color:#fff; }
+  .footer-bottom{ padding-top:22px; display:flex; flex-direction:column; gap:10px; font-size:12px; color:var(--muted-dim); }
+  @media(min-width:768px){ .footer-bottom{ flex-direction:row; justify-content:space-between; align-items:flex-start; } }
+  .footer-bottom .disclaimer{ max-width:520px; }
+  @media(min-width:768px){ .footer-bottom .disclaimer{ text-align:right; } }
+
+  /* ================= MODAL ================= */
+  #waitlistModal{
+    position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.75); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    padding:16px; opacity:0; transition:opacity .3s ease;
+  }
+  #waitlistModal.open{ display:flex; }
+  #waitlistModal.visible{ opacity:1; }
+  .modal-content{
+    width:100%; max-width:440px; max-height:90vh; overflow-y:auto;
+    background:#0B111A; border:1px solid var(--line-soft); border-radius:26px;
+    padding:24px; box-shadow:var(--shadow-card); transform:translateY(18px); transition:transform .3s ease;
+  }
+  @media(min-width:480px){ .modal-content{ padding:34px; } }
+  #waitlistModal.visible .modal-content{ transform:translateY(0); }
+  .modal-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .modal-head .tag{ font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); }
+  .modal-head h2{ margin-top:10px; font-size:22px; }
+  .modal-close{
+    width:34px; height:34px; flex:none; border-radius:999px; border:1px solid var(--line-soft); background:transparent;
+    color:var(--muted); display:flex; align-items:center; justify-content:center; font-size:16px; transition:.2s ease;
+  }
+  .modal-close:hover{ background:rgba(255,255,255,.05); color:#fff; }
+  .modal-content p.desc{ margin-top:12px; font-size:14px; color:var(--muted); line-height:1.65; }
+  .modal-content form{ margin-top:22px; }
+  .modal-note{ margin-top:16px; text-align:center; font-size:12px; color:var(--muted-dim); }
+  .modal-success{ display:none; text-align:center; padding:20px 0; }
+  .modal-success.show{ display:block; }
+  .modal-success .check{
+    width:56px; height:56px; margin:0 auto; border-radius:50%; background:var(--green-bg); color:var(--green);
+    border:1px solid rgba(52,211,153,.25);
+    display:flex; align-items:center; justify-content:center; font-size:24px;
+  }
+  .modal-success h3{ margin-top:18px; font-size:19px; }
+  .modal-success p{ margin-top:8px; font-size:13.5px; color:var(--muted); }
+  .modal-success .btn{ margin-top:24px; }
+  body.modal-open{ overflow:hidden; }
+
+  .sr-only{ position:absolute; left:-9999px; }
+</style>
+</head>
+
+<body class="noise">
+
+  <!-- ================= HEADER ================= -->
+  <header id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="logo" aria-label="WEALTHZY home"><span class="dot"></span>WEALTHZY</a>
+
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#platform">Platform</a>
+        <a href="#intelligence">Intelligence</a>
+        <a href="#about">About</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn btn-primary btn-sm" onclick="openWaitlist()">Join Waitlist</button>
+        <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <svg id="menuIconOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <svg id="menuIconClose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav id="mobileMenu" aria-label="Mobile navigation">
+      <a href="#platform" onclick="closeMobileMenu()">Platform</a>
+      <a href="#intelligence" onclick="closeMobileMenu()">Intelligence</a>
+      <a href="#about" onclick="closeMobileMenu()">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ================= HERO ================= -->
+    <section class="hero">
+      <div class="grid-lines" style="position:absolute; inset:0; z-index:0;"></div>
+      <div class="hero-glowspot"></div>
+
+      <div class="hero-inner">
+        <div class="reveal eyebrow"><span class="dot"></span>Wealth intelligence, reimagined</div>
+        <h1 class="reveal">Make smarter <span class="accent">wealth decisions.</span></h1>
+        <p class="reveal lead">WEALTHZY brings investment research, portfolio intelligence and financial planning into one powerful layer — built for investors who want clarity before action.</p>
+        <div class="reveal hero-ctas">
+          <button class="btn btn-primary" onclick="openWaitlist()">Get Early Access →</button>
+          <a href="#platform" class="btn btn-outline">Explore WEALTHZY</a>
+        </div>
+        <p class="reveal hero-note">Built for investors who want clarity before action.</p>
+      </div>
+
+      <div class="reveal hero-card">
+        <div class="hero-card-inner">
+          <div class="hero-card-panel">
+            <div class="hero-card-head">
+              <div>
+                <p class="tag">WEALTHZY Intelligence</p>
+                <p class="sub">Your financial command center</p>
+              </div>
+              <span class="status-chip"><span class="dot"></span>System ready</span>
+            </div>
+            <div class="metric-grid">
+              <div class="metric-card">
+                <p class="k">Portfolio Health</p>
+                <p class="v">84<small>/100</small></p>
+                <div class="bar-track"><div class="bar-fill" style="width:84%"></div></div>
+              </div>
+              <div class="metric-card">
+                <p class="k">Diversification</p>
+                <p class="v" style="font-size:20px;">Strong</p>
+                <p class="badge-ok">Well balanced</p>
+              </div>
+              <div class="metric-card">
+                <p class="k">AI Insight</p>
+                <p style="margin-top:12px; font-size:13.5px; color:rgba(244,247,250,.75); line-height:1.6;">Your portfolio may have higher exposure to one sector.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= STAT STRIP ================= -->
+    <section class="stat-strip">
+      <div class="wrap">
+        <div class="stat-grid">
+          <div><p class="num">01</p><p class="lbl">Intelligence Layer</p></div>
+          <div><p class="num">360°</p><p class="lbl">Wealth View</p></div>
+          <div><p class="num">AI</p><p class="lbl">Powered Research</p></div>
+          <div><p class="num">24/7</p><p class="lbl">Market Awareness</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PLATFORM ================= -->
+    <section id="platform">
+      <div class="wrap">
+        <div class="reveal section-head">
+          <p class="eyebrow"><span class="dot"></span>The platform</p>
+          <h2 class="h2">One intelligence layer for your entire wealth.</h2>
+          <p class="lead">Stop jumping between research tools, portfolio trackers and financial planners. WEALTHZY is designed to bring the important pieces together, the way a dedicated wealth manager would.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card reveal">
+            <div class="feature-icon">✦</div>
+            <p class="num">01</p>
+            <h3>Research</h3>
+            <p>Fundamental, valuation and market research in one intelligent workspace.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon">◈</div>
+            <p class="num">02</p>
+            <h3>Portfolio</h3>
+            <p>Understand diversification, risk, performance and portfolio health.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon">⌁</div>
+            <p class="num">03</p>
+            <h3>Planning</h3>
+            <p>Connect investments to goals, risk and your long-term financial roadmap.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon">↗</div>
+            <p class="num">04</p>
+            <h3>Insights</h3>
+            <p>Turn financial information into clear, explainable insights and actions.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= INTELLIGENCE ================= -->
+    <section id="intelligence">
+      <div class="wrap">
+        <div class="split">
+          <div class="reveal">
+            <p class="eyebrow"><span class="dot"></span>Intelligence, not noise</p>
+            <h2 class="h2" style="margin-top:14px;">Information becomes useful when it becomes understandable.</h2>
+            <p class="lead" style="margin-top:16px;">WEALTHZY is being designed to analyze financial information and explain what matters, why it matters, and how it connects to your portfolio and goals.</p>
+
+            <div style="margin-top:28px;">
+              <div class="step-row">
+                <span class="step-num">01</span>
+                <div><h4>Context</h4><p>See the bigger picture behind a number or market movement.</p></div>
+              </div>
+              <div class="step-row">
+                <span class="step-num">02</span>
+                <div><h4>Explanation</h4><p>Understand the reasoning instead of receiving unexplained signals.</p></div>
+              </div>
+              <div class="step-row">
+                <span class="step-num">03</span>
+                <div><h4>Action</h4><p>Identify what deserves attention before making a decision.</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal insight-card">
+            <div class="insight-head">
+              <div>
+                <p class="tag">AI Portfolio Insight</p>
+                <p class="sub">Generated from your portfolio</p>
+              </div>
+              <span class="insight-dot"></span>
+            </div>
+            <div class="insight-body">
+              <p>Your portfolio shows a concentration in <strong style="color:#fff;">financial services</strong>. Diversification across sectors may help reduce concentration risk.</p>
+              <div class="insight-mini">
+                <div class="box"><p class="k">Risk</p><p class="v" style="color:var(--amber);">Moderate</p></div>
+                <div class="box"><p class="k">Sector</p><p class="v">31%</p></div>
+                <div class="box"><p class="k">Signal</p><p class="v" style="color:var(--gold);">Review</p></div>
+              </div>
+              <div class="insight-reco">
+                <p class="tag">WEALTHZY recommendation</p>
+                <p>Review sector allocation before adding further exposure.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="trust-row">
+          <div class="trust-item reveal">
+            <div class="ic">🔒</div>
+            <div><h4>Bank-grade security</h4><p>Your data is encrypted in transit and at rest, always.</p></div>
+          </div>
+          <div class="trust-item reveal">
+            <div class="ic">✓</div>
+            <div><h4>No spam, ever</h4><p>Only meaningful updates as WEALTHZY gets closer to launch.</p></div>
+          </div>
+          <div class="trust-item reveal">
+            <div class="ic">🎓</div>
+            <div><h4>Built by finance professionals</h4><p>Designed with real research and portfolio workflows in mind.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+    <section id="about" class="about-section" style="background:var(--bg); border-top:1px solid var(--line-soft);">
+      <div class="about-glow"></div>
+      <div class="wrap" style="position:relative;">
+        <div class="reveal">
+          <p class="eyebrow" style="justify-content:center;"><span class="dot"></span>The WEALTHZY vision</p>
+          <h2 class="h2">Better information.<br>Better understanding.<br><span style="color:rgba(255,255,255,.35);">Better futures.</span></h2>
+          <p class="lead">Markets are complex. Your financial decisions shouldn't have to be. WEALTHZY is being built to make wealth intelligence more accessible, transparent and useful.</p>
+        </div>
+        <div class="gold-rule reveal"></div>
+      </div>
+    </section>
+
+    <!-- ================= CTA ================= -->
+    <section class="cta-section">
+      <div class="wrap">
+        <div class="reveal cta-card">
+          <p class="eyebrow">WEALTHZY is coming</p>
+          <h2>Be first to experience it.</h2>
+          <p>Join the early access list and get meaningful updates as WEALTHZY gets closer to launch.</p>
+
+          <form id="inlineForm" class="waitlist-form" novalidate onsubmit="handleInlineSubmit(event)">
+            <div class="form-row">
+              <div class="field">
+                <label for="inlineEmail" class="sr-only">Email address</label>
+                <input id="inlineEmail" type="email" required autocomplete="email" inputmode="email"
+                  placeholder="Enter your email address" aria-describedby="inlineEmailError">
+                <p id="inlineEmailError" class="field-error" role="alert">Please enter a valid email address.</p>
+              </div>
+              <button type="submit" class="btn btn-primary">Join Waitlist →</button>
+            </div>
+          </form>
+          <p id="inlineSuccessMsg" role="status">You're on the list. We'll be in touch.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="wrap">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="#" class="logo" aria-label="WEALTHZY home"><span class="dot"></span>WEALTHZY</a>
+          <p>Intelligent Wealth. Better Futures. Investment research, portfolio intelligence and financial planning in one layer.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Platform</h5>
+          <ul>
+            <li><a href="#platform">Research</a></li>
+            <li><a href="#platform">Portfolio</a></li>
+            <li><a href="#platform">Planning</a></li>
+            <li><a href="#platform">Insights</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#intelligence">Intelligence</a></li>
+            <li><a href="#" onclick="openWaitlist(); return false;">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Use</a></li>
+            <li><a href="#">Disclaimer</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 WEALTHZY. All rights reserved.</p>
+        <p class="disclaimer">WEALTHZY is under development. Information presented is for informational purposes only and does not constitute financial advice.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= MODAL ================= -->
+  <div id="waitlistModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="modalContent" class="modal-content">
+      <div class="modal-head">
+        <div>
+          <p class="tag">Early access</p>
+          <h2 id="modalTitle">Join WEALTHZY</h2>
+        </div>
+        <button class="modal-close" onclick="closeWaitlist()" aria-label="Close">✕</button>
+      </div>
+
+      <div id="modalFormState">
+        <p class="desc">Be among the first to experience a smarter way to understand your wealth.</p>
+
+        <form id="modalForm" novalidate onsubmit="handleModalSubmit(event)">
+          <div class="field">
+            <label for="modalEmail" class="sr-only">Email address</label>
+            <input id="modalEmail" type="email" required autocomplete="email" inputmode="email"
+              placeholder="you@example.com" aria-describedby="modalEmailError">
+            <p id="modalEmailError" class="field-error" role="alert">Please enter a valid email address.</p>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">Join the Waitlist</button>
+        </form>
+        <p class="modal-note">No spam. Only meaningful WEALTHZY updates.</p>
+      </div>
+
+      <div id="modalSuccessState" class="modal-success">
+        <div class="check">✓</div>
+        <h3>You're on the list.</h3>
+        <p>We'll be in touch when WEALTHZY is ready.</p>
+        <button class="btn btn-outline" onclick="closeWaitlist()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ================= EMAIL VALIDATION ================= */
+    function isValidEmail(value) {
+      var email = value.trim();
+      if (email.length === 0 || email.length > 254) return false;
+      var pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+      if (!pattern.test(email)) return false;
+      var parts = email.split('@');
+      if (parts[0].length > 64) return false;
+      if (email.indexOf('..') !== -1) return false;
+      return true;
+    }
+
+    function setFieldError(input, errorEl, show) {
+      input.classList.toggle('input-error', show);
+      input.setAttribute('aria-invalid', show ? 'true' : 'false');
+      errorEl.classList.toggle('show', show);
+    }
+
+    function validateField(input, errorEl) {
+      var valid = isValidEmail(input.value);
+      setFieldError(input, errorEl, !valid);
+      return valid;
+    }
+
+    function handleModalSubmit(event) {
+      event.preventDefault();
+      var input = document.getElementById('modalEmail');
+      var errorEl = document.getElementById('modalEmailError');
+      if (!validateField(input, errorEl)) { input.focus(); return; }
+      document.getElementById('modalFormState').style.display = 'none';
+      document.getElementById('modalSuccessState').classList.add('show');
+      input.value = '';
+      setFieldError(input, errorEl, false);
+    }
+
+    function handleInlineSubmit(event) {
+      event.preventDefault();
+      var input = document.getElementById('inlineEmail');
+      var errorEl = document.getElementById('inlineEmailError');
+      if (!validateField(input, errorEl)) { input.focus(); return; }
+      input.value = '';
+      document.getElementById('inlineSuccessMsg').classList.add('show');
+    }
+
+    ['modalEmail', 'inlineEmail'].forEach(function (id) {
+      var input = document.getElementById(id);
+      var errorEl = document.getElementById(id + 'Error');
+      input.addEventListener('input', function () {
+        if (errorEl.classList.contains('show') && isValidEmail(input.value)) {
+          setFieldError(input, errorEl, false);
+        }
+      });
+    });
+
+    /* ================= MODAL OPEN/CLOSE ================= */
+    var modal = document.getElementById('waitlistModal');
+    var modalFormState = document.getElementById('modalFormState');
+    var modalSuccessState = document.getElementById('modalSuccessState');
+
+    function openWaitlist() {
+      modal.classList.add('open');
+      document.body.classList.add('modal-open');
+      requestAnimationFrame(function () { modal.classList.add('visible'); });
+      modalFormState.style.display = 'block';
+      modalSuccessState.classList.remove('show');
+      setTimeout(function () {
+        var el = document.getElementById('modalEmail');
+        if (el) el.focus();
+      }, 250);
+    }
+
+    function closeWaitlist() {
+      modal.classList.remove('visible');
+      document.body.classList.remove('modal-open');
+      setTimeout(function () { modal.classList.remove('open'); }, 250);
+    }
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) closeWaitlist();
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && modal.classList.contains('open')) closeWaitlist();
+    });
+
+    /* ================= MOBILE MENU ================= */
+    var mobileMenu = document.getElementById('mobileMenu');
+    var menuToggle = document.getElementById('menuToggle');
+    var menuIconOpen = document.getElementById('menuIconOpen');
+    var menuIconClose = document.getElementById('menuIconClose');
+
+    function toggleMobileMenu() {
+      var isOpen = mobileMenu.style.display === 'flex';
+      isOpen ? closeMobileMenu() : openMobileMenu();
+    }
+    function openMobileMenu() {
+      mobileMenu.style.display = 'flex';
+      menuIconOpen.style.display = 'none';
+      menuIconClose.style.display = 'block';
+      menuToggle.setAttribute('aria-expanded', 'true');
+    }
+    function closeMobileMenu() {
+      mobileMenu.style.display = 'none';
+      menuIconOpen.style.display = 'block';
+      menuIconClose.style.display = 'none';
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+    window.addEventListener('resize', function () {
+      if (window.innerWidth >= 860) closeMobileMenu();
+    });
+
+    /* ================= NAV SCROLL SHADOW ================= */
+    window.addEventListener('scroll', function () {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+
+    /* ================= REVEAL ON SCROLL ================= */
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(function (el) { observer.observe(el); });
+  </script>
+</body>
+</html>
