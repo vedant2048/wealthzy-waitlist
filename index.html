@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="WEALTHZY — Intelligent wealth research, portfolio intelligence and financial planning.">
 <title>WEALTHZY — Intelligent Wealth</title>
-<link rel="icon" type="image/png" href="FullLogo_Transparent.png">
+<!-- Favicon: replace FullLogo.png (in the same folder as this file) with your own logo image -->
+<link rel="icon" type="image/png" href="FullLogo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
@@ -114,6 +115,26 @@
   }
   .logo{ display:flex; align-items:center; gap:8px; font-family:'Manrope',sans-serif; font-weight:800; font-size:19px; color:#fff; letter-spacing:-.01em; }
   .logo .dot{ width:9px; height:9px; border-radius:3px; background:var(--gold); box-shadow:0 0 10px var(--gold); display:inline-block; }
+
+  /* =====================================================
+     LOGO IMAGE
+     File: FullLogo.png — place it in the same folder as
+     this HTML file (or update the src path in the HTML
+     below to wherever you keep it).
+     ===================================================== */
+  .logo-mark{
+    height:34px;      /* <-- ADJUST HEADER LOGO SIZE HERE (width scales automatically) */
+    width:auto;
+    max-width:160px;  /* <-- raise this if a wider logo gets clipped */
+    display:block;
+    object-fit:contain;
+  }
+  @media(max-width:480px){
+    .logo-mark{ height:28px; }  /* <-- ADJUST LOGO SIZE ON SMALL PHONES HERE */
+  }
+  .footer-brand .logo-mark{
+    height:30px;       /* <-- ADJUST FOOTER LOGO SIZE HERE (independent of header) */
+  }
   nav.main-nav{ display:none; align-items:center; gap:30px; }
   nav.main-nav a{ font-size:14px; font-weight:600; color:var(--muted); transition:color .2s ease; }
   nav.main-nav a:hover{ color:#fff; }
@@ -371,7 +392,10 @@
   <!-- ================= HEADER ================= -->
   <header id="navbar">
     <div class="nav-inner">
-      <a href="#" class="logo" aria-label="WEALTHZY home"><span class="dot"></span>WEALTHZY</a>
+      <a href="#" class="logo" aria-label="WEALTHZY home">
+        <!-- Swap FullLogo.png with your logo file; resize it via .logo-mark in the CSS above -->
+        <img src="FullLogo.png" alt="WEALTHZY" class="logo-mark">
+      </a>
 
       <nav class="main-nav" aria-label="Main navigation">
         <a href="#platform">Platform</a>
@@ -600,7 +624,9 @@
     <div class="wrap">
       <div class="footer-top">
         <div class="footer-brand">
-          <a href="#" class="logo" aria-label="WEALTHZY home"><span class="dot"></span>WEALTHZY</a>
+          <a href="#" class="logo" aria-label="WEALTHZY home">
+            <img src="FullLogo.png" alt="WEALTHZY" class="logo-mark">
+          </a>
           <p>Intelligent Wealth. Better Futures. Investment research, portfolio intelligence and financial planning in one layer.</p>
         </div>
         <div class="footer-col">
