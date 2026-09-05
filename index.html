@@ -1,625 +1,1040 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="WEALTHZY — Intelligent wealth research, portfolio intelligence and financial planning.">
-<title>WEALTHZY — Intelligent Wealth</title>
-<!-- Favicon: replace FullLogo.png (in the same folder as this file) with your own logo image -->
+<meta name="description" content="WEALTHZY — AI reviews your portfolio, then matches you with a SEBI-registered RIA. Join the waitlist.">
+<title>WEALTHZY — AI portfolio review, human advice</title>
+
+<!-- Favicon: replace FullLogo.png (same folder as this file) with your own logo image -->
 <link rel="icon" type="image/png" href="FullLogo.png">
+
+<!-- Fonts: Poppins (display + body). Preconnect for faster loading on GitHub Pages -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-  /* ================= TOKENS ================= */
-  :root{
-    --bg:#05080D;
-    --surface:#0A0F17;
-    --surface2:#0E1520;
-    --panel:#111923;
-    --line:#1B2533;
-    --line-soft:rgba(255,255,255,.06);
-    --text:#F4F7FA;
-    --muted:#8995A5;
-    --muted-dim:#5E6B7C;
-    --gold:#D6B36A;
-    --gold2:#B89146;
-    --green:#34D399;
-    --green-bg:rgba(52,211,153,.12);
-    --amber:#F5C97B;
-    --amber-bg:rgba(245,201,123,.12);
-    --red:#F3897E;
-    --red-bg:rgba(243,137,126,.12);
-    --radius-lg:26px;
-    --radius-md:18px;
-    --radius-sm:12px;
-    --shadow-card:0 20px 60px rgba(0,0,0,.35);
-    --shadow-glow:0 0 80px rgba(214,179,106,.10);
-    --container:1180px;
+  /* =====================================================================
+     DECLUTTER PASS — what was removed / consolidated (for reference)
+     ---------------------------------------------------------------------
+     HERO
+       - Removed the 52px grid-pattern overlay (.hero-grid): it competed
+         with the glow, the coins and the tilting dashboard card inside a
+         single viewport. Glow + money elements kept; grid cut.
+       - Money elements reduced from 3 coins + 2 notes to 2 coins + 1 note,
+         at lower opacity.
+       - Removed the 3-item trust line under the form ("AI portfolio review /
+         Matched to a SEBI-registered RIA / No spam") — every point it made
+         is made again by the steps section, the trust strip, or the form
+         microcopy.
+       - Eyebrow shortened to "Pre-launch" (its "join the waitlist" half
+         restated the button 40px below it).
+     DASHBOARD CARD (now the page's single stat strip)
+       - Removed the "Review complete" status chip: a badge repeating what
+         the card header already says, and the only green accent up top.
+       - Removed the progress bar under Portfolio health so all three
+         metrics share one layout: label -> value -> sub-note.
+     HOW IT WORKS
+       - Removed the decorative "->" connectors between step cards.
+       - Removed the pulsing dots from every eyebrow label (page-wide).
+     AI REVIEW
+       - Removed the three Context / Clarity / Action rows: they restated
+         the three steps above them and the insight card beside them. Every
+         financial term they carried (asset allocation, fund overlap, beta,
+         standard deviation, CAGR, rebalance, quarterly review) still
+         appears in the steps, the dashboard or the insight card.
+       - Removed the pulsing dot in the insight card header.
+     TRUST
+       - Three separate icon cards consolidated into one divided strip;
+         redundant icons dropped, copy cut to a single line each.
+       - Removed the section's lead paragraph (the heading made the point).
+     CTA
+       - Removed the "Early access is limited" eyebrow badge (the urgency
+         moved into the body copy) and the radial-glow + gradient stack,
+         leaving one flat surface with a single accent hairline.
+     PALETTE (later pass)
+       - Both themes now come from the Centricity palette.css supplied by
+         the client. Dark = warm near-black (#0F0D0C/#141414) + cream
+         (#EFE7DF) for text, borders and the surfaces of the dashboard
+         panel, step cards and CTA card (.cream-surface). Light = paper
+         (#FAF7F2/#F3F1EC/#F7F0EB) with ink #281F16. Burlywood #C8A070 is
+         the single interactive accent in both.
+     MOTION
+       - 3D tilt now applies to the dashboard card only (was: dashboard +
+         all three step cards + insight card + CTA card), so one card moves
+         per viewport instead of four.
+     ===================================================================== */
+
+  /* =====================================================================
+     DESIGN TOKENS
+     Retune the whole theme from here — colors, radii, shadows, spacing.
+     Dark  = near-black charcoal + warm off-white (#EFE9E3).
+     Light = warm paper palette (#F9F8F6 / #EFE9E3 / #D9CFC7 / #C9B59C).
+     ===================================================================== */
+  :root, [data-theme="dark"]{
+    /* --- BLACK & CREAM, on the Centricity palette -------------------------
+       Every value below is taken from the supplied palette.css (or is a
+       low-opacity form of one of its colors):
+         cream / linen   #EFE7DF  #F5F0EB  #EDE6E1  #E5DDD0
+         warm near-black #0F0D0C  #141414  #281F16  #010100
+         burlywood       #C8A070  (brand accent) + tan #D8B79E #D1B39B
+         warm greys      #BFB2A0  #998C85  #66655F  #6B5C53
+       The cream is load-bearing: body text, border tint, and the fill of
+       the cream surfaces (see .cream-surface). Burlywood is the single
+       interactive accent — buttons, links, focus rings, glows.
+       -------------------------------------------------------------------- */
+
+    /* Backgrounds — warm near-black (palette black-700 / black-1000) */
+    --bg:#0F0D0C;
+    --surface:#141414;
+    --surface-2:#1A1817;
+    --panel:#201D1A;
+
+    /* Burlywood — the one accent (palette --burlywood / tan family) */
+    --royal:#C8A070;
+    --royal-bright:#D8B79E;
+    --royal-soft:#D1B39B;
+    --royal-glow:rgba(200,160,112,.26);
+    --on-accent:#0F0D0C;
+
+    /* Secondary accents (used sparingly) */
+    --gold:#C8A070;
+    --silver:#C6C0BB;
+
+    /* Text — cream at full strength, then stepped down in the same family */
+    --text:#EFE7DF;
+    --heading:#F5F0EB;
+    --text-soft:rgba(239,231,223,.78);
+    --muted:#BFB2A0;
+    --muted-dim:#998C85;
+    --placeholder:rgba(239,231,223,.36);
+
+    /* Lines & feedback — dividers are cream at low opacity, never gray */
+    --line:rgba(239,231,223,.14);
+    --line-soft:rgba(239,231,223,.09);
+    --line-strong:rgba(239,231,223,.30);
+    --green:#30D158;
+    --green-bg:rgba(48,209,88,.12);
+    --green-border:rgba(48,209,88,.26);
+    --green-glow:rgba(48,209,88,.45);
+    --amber:#FFDD86;
+    --red:#FF6568;
+    --red-ring:rgba(255,101,104,.16);
+
+    /* Elevated / translucent surfaces — cream washes over the black */
+    --elev-hairline:rgba(239,231,223,.03);
+    --elev-soft:rgba(239,231,223,.05);
+    --elev-1:rgba(239,231,223,.07);
+    --elev-2:rgba(239,231,223,.12);
+    --inset-bg:rgba(1,1,0,.30);
+    --track:rgba(239,231,223,.12);
+
+    /* Accent washes — burlywood fills, borders and rings */
+    --accent-bg:rgba(200,160,112,.10);
+    --accent-bg-soft:rgba(200,160,112,.06);
+    --accent-border:rgba(200,160,112,.55);
+    --accent-border-soft:rgba(200,160,112,.28);
+    --accent-border-strong:rgba(200,160,112,.70);
+    --accent-ring:rgba(200,160,112,.24);
+
+    /* Ambient tints (hero glow) */
+    --tint-strong:rgba(200,160,112,.10);
+    --tint-med:rgba(239,231,223,.05);
+    --tint-soft:rgba(239,231,223,.03);
+    --glow-core:rgba(200,160,112,.10);
+    --grid-line:rgba(239,231,223,.03);
+
+    /* Chrome & composite surfaces */
+    --nav-bg:rgba(15,13,12,.76);
+    --nav-shadow:0 12px 40px rgba(1,1,0,.55);
+    --backdrop:rgba(1,1,0,.82);
+    --dash-frame-bg:#161413;
+    --shadow-dash:0 44px 130px rgba(1,1,0,.65);
+    --step-bg:linear-gradient(160deg,#181615,#111010);
+    --step-bg-hover:linear-gradient(160deg,#1F1C1A,#141312);
+    --cta-grad:linear-gradient(160deg,#1A1817,#100E0D);
+
+    /* Money elements (coins + paper notes) — cream metal on black */
+    --coin-face:radial-gradient(circle at 34% 30%, #F5F0EB, #EFE7DF 46%, #A89F91 100%);
+    --coin-text:#281F16;
+    --coin-border:rgba(245,240,235,.45);
+    --coin-shadow:inset 0 3px 7px rgba(245,240,235,.55), inset 0 -8px 14px rgba(40,31,22,.45), 0 22px 42px rgba(1,1,0,.55);
+    --note-shadow:drop-shadow(0 20px 34px rgba(1,1,0,.6));
+    --note1-paper:#201D1A;
+    --note1-stroke:rgba(200,160,112,.45);
+    --note1-disc:#2A2521;
+    --note1-disc-stroke:rgba(200,160,112,.55);
+    --note1-line:rgba(200,160,112,.50);
+    --note2-paper:#1A1817;
+    --note2-stroke:rgba(200,160,112,.35);
+    --note2-disc:#231F1C;
+    --note2-disc-stroke:rgba(200,160,112,.45);
+    --note2-line:rgba(200,160,112,.38);
+    --note-text:#D1B39B;
+
+    /* Radii */
+    --r-lg:26px;
+    --r-md:18px;
+    --r-sm:12px;
+
+    /* Shadows */
+    --shadow-card:0 24px 70px rgba(1,1,0,.6);
+    --shadow-royal:0 24px 70px rgba(1,1,0,.5);
+
+    --container:1160px;
   }
 
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  /* =====================================================================
+     LIGHT THEME — the same Centricity palette, inverted
+       paper           #FAF7F2  #F3F1EC  #F7F0EB  #EFEEEA
+       lines           #E6E1DE  #D8D2CE
+       ink             #281F16  #66655F  #6B5C53
+       accent          #C8A070 (fills) / #623F1B (accent text, AA on paper)
+     ===================================================================== */
+  [data-theme="light"]{
+    /* Backgrounds */
+    --bg:#FAF7F2;
+    --surface:#F3F1EC;
+    --surface-2:#F7F0EB;
+    --panel:#EFEEEA;
+
+    /* Burlywood — same accent, deepened where it has to carry text */
+    --royal:#C8A070;
+    --royal-bright:#B18B63;
+    --royal-soft:#623F1B;
+    --royal-glow:rgba(200,160,112,.45);
+    --on-accent:#281F16;
+
+    /* Secondary metallic accents */
+    --gold:#A36100;
+    --silver:#8C7D70;
+
+    /* Text */
+    --text:#281F16;
+    --heading:#1A1713;
+    --text-soft:rgba(40,31,22,.82);
+    --muted:#66655F;
+    --muted-dim:#6B5C53;
+    --placeholder:rgba(40,31,22,.45);
+
+    /* Lines & feedback */
+    --line:#E6E1DE;
+    --line-soft:rgba(40,31,22,.14);
+    --line-strong:rgba(40,31,22,.32);
+    --green:#008138;
+    --green-bg:rgba(0,129,56,.12);
+    --green-border:rgba(0,129,56,.28);
+    --green-glow:rgba(0,129,56,.32);
+    --amber:#953D00;
+    --red:#DA1E28;
+    --red-ring:rgba(218,30,40,.14);
+
+    /* Elevated / translucent surfaces */
+    --elev-hairline:rgba(200,160,112,.10);
+    --elev-soft:rgba(200,160,112,.13);
+    --elev-1:rgba(255,255,255,.72);
+    --elev-2:rgba(200,160,112,.24);
+    --inset-bg:rgba(255,255,255,.68);
+    --track:rgba(216,210,206,.9);
+
+    /* Accent washes */
+    --accent-bg:rgba(200,160,112,.22);
+    --accent-bg-soft:rgba(200,160,112,.14);
+    --accent-border:rgba(200,160,112,.85);
+    --accent-border-soft:rgba(200,160,112,.55);
+    --accent-border-strong:rgba(98,63,27,.55);
+    --accent-ring:rgba(200,160,112,.45);
+
+    /* Ambient tints */
+    --tint-strong:rgba(200,160,112,.30);
+    --tint-med:rgba(200,160,112,.18);
+    --tint-soft:rgba(216,210,206,.38);
+    --glow-core:rgba(200,160,112,.28);
+    --grid-line:rgba(40,31,22,.06);
+
+    /* Chrome & composite surfaces */
+    --nav-bg:rgba(250,247,242,.80);
+    --nav-shadow:0 12px 40px rgba(40,31,22,.12);
+    --backdrop:rgba(40,31,22,.42);
+    --dash-frame-bg:#FFFFFF;
+    --shadow-dash:0 30px 80px rgba(40,31,22,.14);
+    --step-bg:linear-gradient(160deg,#FFFFFF,#F3E8DF);
+    --step-bg-hover:linear-gradient(160deg,#FFFFFF,#EFE7DF);
+    --cta-grad:linear-gradient(160deg,#FFFFFF,#F3E8DF);
+
+    /* Money elements — burlywood metal on paper */
+    --coin-face:radial-gradient(circle at 34% 30%, #FFFFFF, #E5D7C3 46%, #C8A070 100%);
+    --coin-text:#542507;
+    --coin-border:rgba(255,255,255,.75);
+    --coin-shadow:inset 0 3px 7px rgba(255,255,255,.85), inset 0 -8px 14px rgba(132,80,28,.28), 0 18px 34px rgba(40,31,22,.18);
+    --note-shadow:drop-shadow(0 16px 28px rgba(40,31,22,.16));
+    --note1-paper:#F3E8DF;
+    --note1-stroke:rgba(200,160,112,.95);
+    --note1-disc:#E5DDD0;
+    --note1-disc-stroke:rgba(177,139,99,.85);
+    --note1-line:rgba(200,160,112,.95);
+    --note2-paper:#F7F0EB;
+    --note2-stroke:rgba(216,210,206,.95);
+    --note2-disc:#EDE6E1;
+    --note2-disc-stroke:rgba(200,160,112,.9);
+    --note2-line:rgba(216,210,206,1);
+    --note-text:#623F1B;
+
+    /* Shadows — softer and warm-tinted on paper */
+    --shadow-card:0 24px 70px rgba(40,31,22,.16);
+    --shadow-royal:0 20px 60px rgba(200,160,112,.38);
+  }
+
+  /* =====================================================================
+     CREAM SURFACES — dark mode only
+     The same token names, flipped: #EFE7DF becomes the surface and the
+     warm near-black becomes the ink. Any component given .cream-surface
+     (the hero dashboard panel, the step cards, the CTA card) re-themes
+     itself and everything inside it — headings, sub-notes, hairlines,
+     buttons — with no per-component color rules. This is what makes the
+     page read as black AND cream: some panels are dark-on-black, others
+     cream-on-black. Light mode is untouched: the scope never matches there.
+     ===================================================================== */
+  :root:not([data-theme="light"]) .cream-surface{
+    /* Surfaces (palette linen / seashell / antiquewhite) */
+    --surface:#EFE7DF;
+    --surface-2:#E5DDD0;
+    --panel:#EFE7DF;
+    --step-bg:linear-gradient(160deg,#F3E8DF,#E9E0D6);
+    --step-bg-hover:linear-gradient(160deg,#F7F0EB,#EFE7DF);
+    --cta-grad:linear-gradient(160deg,#F3E8DF,#E9E0D6);
+
+    /* Ink (palette --black #281F16) */
+    --text:#281F16;
+    --heading:#1A1713;
+    --text-soft:rgba(40,31,22,.80);
+    --muted:#66655F;
+    --muted-dim:#6B5C53;
+    --placeholder:rgba(40,31,22,.45);
+
+    /* Interactive: the button inverts to near-black on cream */
+    --royal:#281F16;
+    --royal-bright:#010100;
+    --royal-soft:#623F1B;
+    --royal-glow:rgba(40,31,22,.24);
+    --on-accent:#EFE7DF;
+    --amber:#953D00;
+
+    /* Structure — burlywood keeps the accent role, ink carries the grid */
+    --line:rgba(40,31,22,.16);
+    --line-soft:rgba(40,31,22,.12);
+    --line-strong:rgba(40,31,22,.32);
+    --elev-hairline:rgba(40,31,22,.03);
+    --elev-soft:rgba(40,31,22,.04);
+    --elev-1:rgba(255,255,255,.55);
+    --elev-2:rgba(40,31,22,.09);
+    --inset-bg:rgba(255,255,255,.55);
+    --track:rgba(40,31,22,.14);
+    --accent-bg:rgba(200,160,112,.22);
+    --accent-bg-soft:rgba(200,160,112,.14);
+    --accent-border:rgba(163,97,0,.85);
+    --accent-border-soft:rgba(200,160,112,.55);
+    --accent-border-strong:rgba(98,63,27,.55);
+    --accent-ring:rgba(163,97,0,.35);
+    --shadow-royal:0 24px 70px rgba(1,1,0,.45);
+  }
+  /* Cream panels sit on black, so they carry the surface color themselves */
+  :root:not([data-theme="light"]) .dash-panel.cream-surface,
+  :root:not([data-theme="light"]) .trust-strip.cream-surface{ background:var(--surface); }
+
+  /* Smooth the swap between themes (color only — no transforms touched) */
+  body, #navbar, .dash-frame, .dash-panel, .step, .insight-card, .trust-strip,
+  .cta-card, footer, .modal-content, .metric, .field input{
+    transition:background-color .35s ease, color .35s ease, border-color .35s ease;
+  }
+  @media(prefers-reduced-motion: reduce){
+    body, #navbar, .dash-frame, .dash-panel, .step, .insight-card, .trust-strip,
+    .cta-card, footer, .modal-content, .metric, .field input{ transition:none; }
+  }
+
+  /* =====================================================================
+     BASE / RESET
+     ===================================================================== */
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
   body{
     margin:0;
     background:var(--bg);
     color:var(--text);
-    font-family:'DM Sans',Arial,sans-serif;
+    font-family:'Poppins',system-ui,Arial,sans-serif;
+    font-weight:400;
+    line-height:1.6;
     -webkit-font-smoothing:antialiased;
-    line-height:1.55;
     overflow-x:hidden;
   }
-  h1,h2,h3,h4,.display{ font-family:'Manrope',Arial,sans-serif; margin:0; color:#fff; }
-  p{margin:0;}
-  a{color:inherit; text-decoration:none;}
-  img{max-width:100%; display:block;}
-  button{font-family:inherit; cursor:pointer;}
-  ul{margin:0; padding:0;}
-  .wrap{max-width:var(--container); margin:0 auto; padding:0 clamp(16px,4vw,32px);}
-  section{padding:clamp(56px,8vw,104px) 0;}
+  h1,h2,h3,h4{ margin:0; font-weight:700; line-height:1.15; letter-spacing:-.02em; color:var(--heading); }
+  p{ margin:0; }
+  a{ color:inherit; text-decoration:none; }
+  img{ max-width:100%; display:block; }
+  button{ font-family:inherit; cursor:pointer; }
+  ul{ margin:0; padding:0; list-style:none; }
+  .wrap{ max-width:var(--container); margin:0 auto; padding:0 clamp(18px,4vw,32px); }
+  section{ padding:clamp(76px,10vw,140px) 0; }
+  .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
 
-  .noise{
-    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
-  }
-  .grid-lines{
-    background-image:
-      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-    background-size:48px 48px;
-    -webkit-mask-image:linear-gradient(to bottom, black, transparent 85%);
-    mask-image:linear-gradient(to bottom, black, transparent 85%);
-  }
-
+  /* Shared type helpers — fluid sizing so nothing breaks on small screens */
   .eyebrow{
-    display:inline-flex; align-items:center; gap:8px;
-    font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase;
-    color:var(--gold);
+    display:inline-block;
+    font-size:11.5px; font-weight:600; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--muted);
   }
-  .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold); box-shadow:0 0 10px var(--gold);}
+  .h2{ font-size:clamp(28px,4.4vw,46px); font-weight:700; color:var(--heading); }
+  .lead{ color:var(--muted); font-size:clamp(15px,1.7vw,17px); line-height:1.75; }
 
-  .h2{ font-size:clamp(28px,4.2vw,44px); font-weight:700; letter-spacing:-.02em; line-height:1.15; color:#fff; }
-  .lead{ color:var(--muted); font-size:clamp(14.5px,1.6vw,16.5px); line-height:1.75; }
-
+  /* Buttons — micro-interaction: lift on hover, press on click, arrow nudge */
   .btn{
-    display:inline-flex; align-items:center; justify-content:center; gap:6px;
-    border-radius:999px; font-weight:700; font-size:14px;
-    padding:14px 26px; border:1px solid transparent; transition:.2s ease;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    border-radius:999px; font-weight:600; font-size:14.5px;
+    padding:14px 28px; border:1px solid transparent;
+    transition:transform .28s cubic-bezier(.22,1,.36,1), background .2s ease, border-color .2s ease, box-shadow .28s ease;
     white-space:nowrap;
   }
-  .btn-primary{ background:var(--gold); color:#0A0F17; box-shadow:0 12px 30px rgba(214,179,106,.18); }
-  .btn-primary:hover{ background:#E2C47D; transform:translateY(-2px); }
-  .btn-outline{ background:rgba(255,255,255,.03); color:#fff; border-color:var(--line-soft); }
-  .btn-outline:hover{ border-color:rgba(255,255,255,.2); background:rgba(255,255,255,.06); }
-  .btn-sm{ padding:10px 20px; font-size:13px; }
+  .btn-primary{ background:var(--royal); color:var(--on-accent); box-shadow:0 10px 26px var(--royal-glow); }
+  .btn-primary:hover{ background:var(--royal-bright); transform:translateY(-2px); box-shadow:0 16px 38px var(--royal-glow); }
+  .btn-ghost{ background:var(--elev-1); color:var(--heading); border-color:var(--line-soft); }
+  .btn-ghost:hover{ border-color:var(--line-strong); background:var(--elev-2); transform:translateY(-2px); }
+  .btn:active{ transform:translateY(0) scale(.98); }
+  .btn .arrow{ display:inline-block; transition:transform .28s cubic-bezier(.22,1,.36,1); }
+  .btn:hover .arrow{ transform:translateX(4px); }
+  .btn-sm{ padding:10px 20px; font-size:13.5px; }
   .btn-block{ width:100%; }
 
-  /* ================= REVEAL ================= */
-  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
-  .reveal.show{ opacity:1; transform:translateY(0); }
-  @media(prefers-reduced-motion: reduce){
-    *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+  /* =====================================================================
+     SCROLL PROGRESS BAR (fixed, top of page)
+     ===================================================================== */
+  #scrollProgress{
+    position:fixed; top:0; left:0; height:2px; width:0%; z-index:80;
+    background:var(--royal);
+    transition:width .12s ease-out;
   }
 
-  /* ================= HEADER ================= */
+  /* =====================================================================
+     REVEAL-ON-SCROLL
+     ===================================================================== */
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.show{ opacity:1; transform:translateY(0); }
+  /* Staggered entrance for items inside a grid/row group */
+  .stagger > .reveal:nth-child(1){ transition-delay:0s; }
+  .stagger > .reveal:nth-child(2){ transition-delay:.09s; }
+  .stagger > .reveal:nth-child(3){ transition-delay:.18s; }
+  .stagger > .reveal:nth-child(4){ transition-delay:.27s; }
+
+  /* --- NEW MOMENT 1: hero page-load sequence (staggered, fires once) --- */
+  .hero-seq > *{ opacity:0; transform:translateY(20px); }
+  @keyframes heroIn{ to{ opacity:1; transform:translateY(0); } }
+  body.loaded .hero-seq > *{ animation:heroIn .85s cubic-bezier(.22,1,.36,1) forwards; }
+  body.loaded .hero-seq > *:nth-child(1){ animation-delay:.05s; }
+  body.loaded .hero-seq > *:nth-child(2){ animation-delay:.16s; }
+  body.loaded .hero-seq > *:nth-child(3){ animation-delay:.28s; }
+  body.loaded .hero-seq > *:nth-child(4){ animation-delay:.40s; }
+  .hero-seq-late{ opacity:0; transform:translateY(26px); }
+  body.loaded .hero-seq-late{ animation:heroIn 1s cubic-bezier(.22,1,.36,1) .58s forwards; }
+
+  @media(prefers-reduced-motion: reduce){
+    *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+    .reveal{ opacity:1; transform:none; }
+    .hero-seq > *, .hero-seq-late{ opacity:1 !important; transform:none !important; }
+    .trust-strip .trust-item{ opacity:1 !important; transform:none !important; }
+  }
+
+  /* =====================================================================
+     HEADER / NAV
+     ===================================================================== */
   #navbar{
-    position:fixed; inset:0 0 auto 0; z-index:50;
-    background:rgba(5,8,13,.72); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    position:fixed; inset:0 0 auto 0; z-index:60;
+    background:var(--nav-bg); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
     border-bottom:1px solid var(--line-soft);
     transition:box-shadow .25s ease;
   }
-  #navbar.scrolled{ box-shadow:0 10px 40px rgba(0,0,0,.35); }
+  #navbar.scrolled{ box-shadow:var(--nav-shadow); }
   .nav-inner{
-    max-width:var(--container); margin:0 auto; padding:0 clamp(16px,4vw,32px);
-    height:72px; display:flex; align-items:center; justify-content:space-between; gap:16px;
+    max-width:var(--container); margin:0 auto; padding:0 clamp(18px,4vw,32px);
+    height:74px; display:flex; align-items:center; justify-content:space-between; gap:16px;
   }
-  .logo{ display:flex; align-items:center; gap:8px; font-family:'Manrope',sans-serif; font-weight:800; font-size:19px; color:#fff; letter-spacing:-.01em; }
-  .logo .dot{ width:9px; height:9px; border-radius:3px; background:var(--gold); box-shadow:0 0 10px var(--gold); display:inline-block; }
+  .logo{ display:flex; align-items:center; gap:9px; font-weight:700; font-size:19px; color:var(--heading); letter-spacing:-.01em; }
 
-  /* =====================================================
+  /* =====================================================================
      LOGO IMAGE
-     File: FullLogo.png — place it in the same folder as
-     this HTML file (or update the src path in the HTML
-     below to wherever you keep it).
-     ===================================================== */
+     Drop a file named FullLogo.png next to this HTML (or change the src).
+     ===================================================================== */
   .logo-mark{
     height:34px;      /* <-- ADJUST HEADER LOGO SIZE HERE (width scales automatically) */
     width:auto;
-    max-width:160px;  /* <-- raise this if a wider logo gets clipped */
+    max-width:170px;  /* <-- raise this if a wide logo gets clipped */
     display:block;
     object-fit:contain;
   }
   @media(max-width:480px){
-    .logo-mark{ height:28px; }  /* <-- ADJUST LOGO SIZE ON SMALL PHONES HERE */
+    .logo-mark{ height:28px; }   /* <-- ADJUST LOGO SIZE ON SMALL PHONES HERE */
   }
   .footer-brand .logo-mark{
-    height:30px;       /* <-- ADJUST FOOTER LOGO SIZE HERE (independent of header) */
+    height:30px;                 /* <-- ADJUST FOOTER LOGO SIZE HERE (independent of header) */
   }
-  nav.main-nav{ display:none; align-items:center; gap:30px; }
-  nav.main-nav a{ font-size:14px; font-weight:600; color:var(--muted); transition:color .2s ease; }
-  nav.main-nav a:hover{ color:#fff; }
-  @media(min-width:860px){ nav.main-nav{ display:flex; } }
+
+  nav.main-nav{ display:none; align-items:center; gap:32px; }
+  nav.main-nav a{ position:relative; font-size:14px; font-weight:500; color:var(--muted); transition:color .2s ease; }
+  nav.main-nav a:hover{ color:var(--heading); }
+  /* NEW MOMENT 2a: underline wipes in from the left on hover */
+  nav.main-nav a::after{
+    content:""; position:absolute; left:0; right:0; bottom:-6px; height:1px; background:currentColor;
+    transform:scaleX(0); transform-origin:left; transition:transform .35s cubic-bezier(.22,1,.36,1);
+  }
+  nav.main-nav a:hover::after{ transform:scaleX(1); }
+  @media(min-width:880px){ nav.main-nav{ display:flex; } }
 
   .nav-actions{ display:flex; align-items:center; gap:10px; }
   .menu-toggle{
-    display:flex; width:40px; height:40px; align-items:center; justify-content:center;
-    border-radius:10px; border:1px solid var(--line-soft); background:rgba(255,255,255,.02); color:#fff;
+    display:flex; width:42px; height:42px; align-items:center; justify-content:center;
+    border-radius:11px; border:1px solid var(--line-soft); background:var(--elev-hairline); color:var(--heading);
   }
-  @media(min-width:860px){ .menu-toggle{ display:none; } }
+
+  /* Theme switch — same visual language as the other nav buttons */
+  .theme-toggle{
+    display:flex; width:42px; height:42px; align-items:center; justify-content:center;
+    border-radius:11px; border:1px solid var(--line-soft); background:var(--elev-hairline); color:var(--heading);
+    transition:background .2s ease, border-color .2s ease, color .2s ease, transform .28s cubic-bezier(.22,1,.36,1);
+  }
+  .theme-toggle:hover{ background:var(--elev-2); border-color:var(--line-strong); transform:translateY(-1px); }
+  .theme-toggle:active{ transform:scale(.94); }
+  .theme-toggle svg{ width:18px; height:18px; }
+  .theme-toggle:focus-visible, .menu-toggle:focus-visible, .theme-toggle-mobile:focus-visible{
+    outline:2px solid var(--royal); outline-offset:2px;
+  }
+  .theme-toggle-mobile{
+    display:flex; align-items:center; gap:10px; width:100%; text-align:left;
+    padding:13px 8px; font-size:14.5px; font-weight:500; color:var(--text);
+    background:transparent; border:0; border-radius:10px;
+  }
+  .theme-toggle-mobile:hover{ background:var(--elev-1); }
+  .theme-toggle-mobile svg{ width:18px; height:18px; flex:none; }
+  @media(min-width:880px){ .menu-toggle{ display:none; } }
   .menu-toggle svg{ width:18px; height:18px; }
 
   #mobileMenu{
     display:none; flex-direction:column; gap:2px;
-    border-top:1px solid var(--line-soft); padding:10px clamp(16px,4vw,32px) 18px; background:var(--surface);
+    border-top:1px solid var(--line-soft); padding:10px clamp(18px,4vw,32px) 18px; background:var(--surface);
   }
-  #mobileMenu a{ padding:12px 8px; font-size:14px; font-weight:600; color:var(--text); border-radius:10px; }
-  #mobileMenu a:hover{ background:rgba(255,255,255,.04); }
-  @media(min-width:860px){ #mobileMenu{ display:none !important; } }
+  #mobileMenu a{ padding:13px 8px; font-size:14.5px; font-weight:500; color:var(--text); border-radius:10px; }
+  #mobileMenu a:hover{ background:var(--elev-1); }
+  @media(min-width:880px){ #mobileMenu{ display:none !important; } }
 
-  /* ================= HERO ================= */
+  /* =====================================================================
+     HERO — one glow, two coins, one note, one card. Nothing else.
+     ===================================================================== */
   .hero{
     position:relative; overflow:hidden;
-    padding:clamp(120px,18vw,180px) 0 0;
+    padding:clamp(140px,21vw,200px) 0 clamp(70px,9vw,110px);
     border-bottom:1px solid var(--line-soft);
     background:
-      radial-gradient(circle at 50% 0%, rgba(214,179,106,.13), transparent 32%),
-      radial-gradient(circle at 8% 45%, rgba(56,96,138,.12), transparent 28%),
-      radial-gradient(circle at 92% 50%, rgba(56,96,138,.10), transparent 28%),
+      radial-gradient(720px 400px at 50% -6%, var(--tint-strong), transparent 62%),
       var(--bg);
   }
-  .hero::before{ content:""; position:absolute; inset:0; z-index:0; }
-  .hero-glowspot{
-    position:absolute; left:50%; top:120px; width:420px; height:420px; max-width:80vw;
-    transform:translateX(-50%); border-radius:50%; background:rgba(214,179,106,.05); filter:blur(100px);
-    pointer-events:none;
+  .hero-glow{
+    position:absolute; left:50%; top:90px; width:460px; height:460px; max-width:82vw;
+    transform:translateX(-50%); border-radius:50%;
+    background:radial-gradient(circle, var(--glow-core), transparent 68%);
+    filter:blur(50px); pointer-events:none; will-change:transform; z-index:0;
   }
-  .hero-inner{ position:relative; z-index:1; max-width:900px; margin:0 auto; text-align:center; padding:0 clamp(16px,4vw,32px) 56px; }
+
+  .hero-inner{ position:relative; z-index:2; max-width:880px; margin:0 auto; text-align:center; }
   .hero h1{
-    margin-top:22px; font-size:clamp(34px,7vw,84px); font-weight:700; letter-spacing:-.045em; line-height:1.05; color:#fff;
+    margin-top:22px; font-size:clamp(36px,7vw,74px); font-weight:700; letter-spacing:-.035em; color:var(--heading);
   }
-  .hero h1 .accent{
-    background:linear-gradient(90deg,#fff,rgba(255,255,255,.55));
+  .hero h1 .grad{
+    background:linear-gradient(100deg, var(--royal-soft), var(--heading) 60%);
     -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  .hero p.lead{ max-width:600px; margin:22px auto 0; font-size:clamp(15px,1.8vw,18px); }
-  .hero-ctas{ display:flex; flex-direction:column; gap:12px; justify-content:center; margin-top:34px; }
-  @media(min-width:560px){ .hero-ctas{ flex-direction:row; } }
-  .hero-note{ margin-top:22px; font-size:12px; color:var(--muted-dim); }
+  .hero p.lead{ max-width:580px; margin:22px auto 0; font-size:clamp(15px,1.9vw,18.5px); }
 
-  .hero-card{ position:relative; z-index:1; max-width:960px; margin:0 auto; padding:0 clamp(16px,4vw,32px); }
-  .hero-card-inner{
-    background:#080D14; border:1px solid var(--line-soft); border-radius:28px; padding:8px;
-    box-shadow:0 40px 120px rgba(0,0,0,.5);
-  }
-  .hero-card-panel{ background:var(--surface); border-radius:22px; padding:clamp(18px,4vw,32px); border:1px solid var(--line-soft); }
-  .hero-card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
-  .hero-card-head .tag{ font-size:10px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); }
-  .hero-card-head .sub{ margin-top:4px; font-size:13px; color:var(--muted); }
-  .status-chip{
-    display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px;
-    background:var(--green-bg); color:var(--green); font-size:11px; font-weight:600;
-    border:1px solid rgba(52,211,153,.2);
-  }
-  .status-chip .dot{ width:6px; height:6px; border-radius:50%; background:var(--green); }
-
-  .metric-grid{ display:grid; gap:12px; grid-template-columns:1fr; }
-  @media(min-width:640px){ .metric-grid{ grid-template-columns:repeat(3,1fr); } }
-  .metric-card{ background:rgba(255,255,255,.025); border:1px solid var(--line-soft); border-radius:16px; padding:18px; }
-  .metric-card .k{ font-size:12px; color:var(--muted); }
-  .metric-card .v{ margin-top:10px; font-size:26px; font-weight:700; color:#fff; }
-  .metric-card .v small{ font-size:13px; color:var(--muted); font-weight:500; }
-  .bar-track{ margin-top:12px; height:6px; border-radius:999px; background:rgba(255,255,255,.06); overflow:hidden; }
-  .bar-fill{ height:100%; background:var(--gold); border-radius:999px; }
-  .metric-card .badge-ok{ margin-top:8px; font-size:12px; color:var(--green); }
-
-  /* ================= STAT STRIP ================= */
-  .stat-strip{ background:var(--surface); border-bottom:1px solid var(--line-soft); padding:34px 0; }
-  .stat-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:26px 12px; text-align:center; }
-  @media(min-width:768px){ .stat-grid{ grid-template-columns:repeat(4,1fr); } }
-  .stat-grid .num{
-    font-family:'Manrope',sans-serif; font-size:clamp(22px,4vw,32px); font-weight:800;
-    background:linear-gradient(180deg,#fff,#9DA8B5); -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .stat-grid .lbl{ margin-top:6px; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
-
-  /* ================= SECTION HEAD ================= */
-  .section-head{ max-width:640px; }
-  .section-head.center{ margin:0 auto; text-align:center; }
-  .section-head h2{ margin-top:14px; }
-  .section-head p{ margin-top:16px; }
-
-  /* ================= FEATURE GRID ================= */
-  .feature-grid{ margin-top:44px; display:grid; grid-template-columns:1fr; gap:16px; }
-  @media(min-width:640px){ .feature-grid{ grid-template-columns:repeat(2,1fr); } }
-  @media(min-width:1024px){ .feature-grid{ grid-template-columns:repeat(4,1fr); } }
-  .feature-card{
-    background:linear-gradient(145deg, rgba(16,23,34,.92), rgba(8,12,18,.96));
-    border:1px solid var(--line); border-radius:var(--radius-md);
-    padding:26px; transition:transform .3s ease, border-color .3s ease, background .3s ease;
-  }
-  .feature-card:hover{
-    transform:translateY(-6px);
-    border-color:rgba(214,179,106,.28);
-    background:linear-gradient(145deg, rgba(19,28,41,.98), rgba(9,14,21,.98));
-  }
-  .feature-icon{
-    width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center;
-    background:rgba(214,179,106,.06); border:1px solid rgba(214,179,106,.18); color:var(--gold); font-size:20px;
-  }
-  .feature-card .num{ margin-top:22px; font-size:11px; font-weight:800; letter-spacing:.16em; color:var(--gold); }
-  .feature-card h3{ margin-top:8px; font-size:18px; }
-  .feature-card p{ margin-top:8px; font-size:14px; color:var(--muted); line-height:1.65; }
-
-  /* ================= INTELLIGENCE ================= */
-  .split{ display:grid; grid-template-columns:1fr; gap:44px; align-items:center; }
-  @media(min-width:960px){ .split{ grid-template-columns:1fr 1fr; gap:64px; } }
-  .step-row{ display:flex; gap:14px; padding:16px; border:1px solid var(--line-soft); border-radius:14px; background:rgba(255,255,255,.02); }
-  .step-row + .step-row{ margin-top:12px; }
-  .step-num{ font-weight:800; color:var(--gold); font-size:14px; }
-  .step-row h4{ font-size:15px; color:#fff; }
-  .step-row p{ margin-top:4px; font-size:13.5px; color:var(--muted); }
-
-  .insight-card{
-    background:var(--surface2); border:1px solid rgba(214,179,106,.2); border-radius:var(--radius-lg);
-    padding:clamp(20px,4vw,32px); box-shadow:var(--shadow-glow);
-  }
-  .insight-head{ display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line-soft); padding-bottom:18px; }
-  .insight-head .tag{ font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); }
-  .insight-head .sub{ margin-top:4px; font-size:13px; color:var(--muted); }
-  .insight-dot{ width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 14px var(--gold); }
-  .insight-body p{ margin-top:22px; font-size:14.5px; line-height:1.8; color:rgba(244,247,250,.72); }
-  .insight-mini{ margin-top:22px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-  .insight-mini .box{ background:rgba(0,0,0,.15); border:1px solid var(--line-soft); border-radius:14px; padding:14px; }
-  .insight-mini .box .k{ font-size:10px; color:var(--muted); }
-  .insight-mini .box .v{ margin-top:8px; font-weight:700; color:#fff; }
-  .insight-reco{ margin-top:22px; border:1px solid rgba(214,179,106,.15); background:rgba(214,179,106,.05); border-radius:14px; padding:14px; }
-  .insight-reco .tag{ font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); }
-  .insight-reco p{ margin-top:6px; font-size:13.5px; color:rgba(244,247,250,.7); }
-
-  /* ================= TRUST ROW ================= */
-  .trust-row{ margin-top:44px; display:grid; grid-template-columns:1fr; gap:14px; }
-  @media(min-width:640px){ .trust-row{ grid-template-columns:repeat(3,1fr); } }
-  .trust-item{ display:flex; gap:14px; align-items:flex-start; padding:20px; border:1px solid var(--line); border-radius:16px; background:var(--panel); }
-  .trust-item .ic{
-    width:38px; height:38px; flex:none; border-radius:10px; background:rgba(214,179,106,.08);
-    border:1px solid rgba(214,179,106,.18); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:16px;
-  }
-  .trust-item h4{ font-size:14.5px; color:#fff; }
-  .trust-item p{ margin-top:4px; font-size:13px; color:var(--muted); }
-
-  /* ================= ABOUT ================= */
-  .about-section{ text-align:center; position:relative; overflow:hidden; }
-  .about-glow{
-    position:absolute; left:50%; top:50%; width:500px; height:500px; max-width:90vw;
-    transform:translate(-50%,-50%); border-radius:50%; background:rgba(214,179,106,.035); filter:blur(100px);
-    pointer-events:none;
-  }
-  .about-section .h2{ max-width:760px; margin:14px auto 0; font-size:clamp(28px,5vw,58px); }
-  .about-section .lead{ max-width:620px; margin:18px auto 0; }
-  .gold-rule{ width:120px; height:1px; margin:36px auto 0; background:linear-gradient(90deg,transparent,var(--gold),transparent); opacity:.6; }
-
-  /* ================= CTA ================= */
-  .cta-section{ background:var(--surface); }
-  .cta-card{
-    max-width:860px; margin:0 auto; text-align:center; border-radius:32px;
-    border:1px solid rgba(214,179,106,.15);
-    background:linear-gradient(145deg,#111923,#080C12);
-    color:#fff; padding:clamp(40px,7vw,72px) clamp(20px,5vw,56px);
-    box-shadow:var(--shadow-glow);
-  }
-  .cta-card .eyebrow{ justify-content:center; }
-  .cta-card h2{ margin-top:14px; color:#fff; font-size:clamp(28px,5vw,48px); }
-  .cta-card p{ margin-top:14px; color:var(--muted); font-size:15px; max-width:460px; margin-left:auto; margin-right:auto; }
-
-  .waitlist-form{ margin-top:32px; max-width:520px; margin-left:auto; margin-right:auto; }
+  /* Inline hero waitlist form */
+  .hero-form{ margin:36px auto 0; max-width:500px; }
   .form-row{ display:flex; flex-direction:column; gap:10px; }
-  @media(min-width:560px){ .form-row{ flex-direction:row; align-items:flex-start; } }
+  @media(min-width:540px){ .form-row{ flex-direction:row; align-items:flex-start; } }
   .field{ flex:1; min-width:0; text-align:left; }
   .field input{
-    width:100%; padding:14px 18px; border-radius:999px; border:1px solid var(--line-soft);
-    background:rgba(0,0,0,.25); color:#fff; font-size:14px; outline:none; transition:border-color .2s ease;
+    width:100%; padding:15px 20px; border-radius:999px; border:1px solid var(--line-soft);
+    background:var(--elev-1); color:var(--heading); font-size:14.5px; font-family:inherit; outline:none;
+    transition:border-color .2s ease, box-shadow .2s ease;
   }
-  .field input::placeholder{ color:rgba(255,255,255,.28); }
-  .field input:focus{ border-color:rgba(214,179,106,.6); }
-  .field input.input-error{ border-color:var(--red) !important; }
-  .field-error{ display:none; margin-top:8px; padding:0 6px; font-size:12px; color:var(--red); text-align:left; }
+  .field input::placeholder{ color:var(--placeholder); }
+  .field input:focus{ border-color:var(--royal); box-shadow:0 0 0 4px var(--accent-ring); }
+  .field input.input-error{ border-color:var(--red) !important; box-shadow:0 0 0 4px var(--red-ring) !important; }
+  .field-error{ display:none; margin-top:8px; padding:0 8px; font-size:12.5px; color:var(--red); text-align:left; }
   .field-error.show{ display:block; }
-  .waitlist-form .btn{ width:100%; flex:none; }
-  @media(min-width:560px){ .waitlist-form .btn{ width:auto; } }
-  #inlineSuccessMsg{ display:none; margin-top:16px; font-size:14px; color:var(--gold); }
+  .hero-form .btn{ flex:none; }
+  @media(max-width:539px){ .hero-form .btn{ width:100%; } }
+  .hero-microcopy{ margin-top:16px; font-size:12.5px; color:var(--muted-dim); }
+  #inlineSuccessMsg{ display:none; margin-top:12px; font-size:14px; color:var(--royal-soft); font-weight:500; }
   #inlineSuccessMsg.show{ display:block; }
 
-  /* ================= FOOTER ================= */
-  footer{ background:var(--bg); color:var(--muted); padding:56px 0 28px; border-top:1px solid var(--line-soft); }
-  .footer-top{ display:grid; grid-template-columns:1fr; gap:36px; padding-bottom:36px; border-bottom:1px solid var(--line-soft); }
-  @media(min-width:640px){ .footer-top{ grid-template-columns:1.4fr 1fr 1fr; } }
-  @media(min-width:960px){ .footer-top{ grid-template-columns:1.4fr 1fr 1fr 1fr; } }
-  .footer-brand .logo{ color:#fff; }
-  .footer-brand p{ margin-top:14px; font-size:13.5px; color:var(--muted-dim); max-width:260px; }
-  .footer-col h5{ font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin-bottom:14px; }
-  .footer-col ul{ list-style:none; display:flex; flex-direction:column; gap:10px; }
+  /* =====================================================================
+     MONEY ELEMENTS — floating 3D coins + a 2D paper note (decorative)
+     Built with CSS transforms + SVG. Hidden on small screens / reduced motion.
+     ===================================================================== */
+  .money-layer{ position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden; opacity:.75; }
+  @media(max-width:620px){ .money-layer{ display:none; } }
+
+  /* --- 3D spinning coin --- */
+  .coin{ position:absolute; perspective:600px; }
+  .coin .spin{ width:100%; height:100%; position:relative; transform-style:preserve-3d; animation:coinSpin 8s linear infinite; }
+  .coin .face{
+    position:absolute; inset:0; border-radius:50%; backface-visibility:hidden;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; color:var(--coin-text);
+    background:var(--coin-face);
+    box-shadow:var(--coin-shadow);
+    border:1px solid var(--coin-border);
+  }
+  .coin .face.back{ transform:rotateY(180deg); }
+  .coin.c1{ width:70px; height:70px; left:7%; top:28%; animation:floatY 6.5s ease-in-out infinite; }
+  .coin.c1 .face{ font-size:1.35rem; }
+  .coin.c2{ width:46px; height:46px; right:9%; top:24%; animation:floatY 7.4s ease-in-out infinite 1s; }
+  .coin.c2 .face{ font-size:.95rem; }
+
+  /* --- 2D paper note (SVG-filled) --- */
+  .note{ position:absolute; width:100px; opacity:.85; filter:var(--note-shadow); }
+  .note.n1{ right:11%; top:62%; animation:floatNote 8s ease-in-out infinite; }
+  /* Note artwork re-themed from tokens */
+  .note.n1 > rect:first-of-type{ fill:var(--note1-paper); stroke:var(--note1-stroke); stroke-opacity:1; }
+  .note.n1 circle{ fill:var(--note1-disc); stroke:var(--note1-disc-stroke); stroke-opacity:1; }
+  .note.n1 > rect:not(:first-of-type){ fill:var(--note1-line); fill-opacity:1; }
+  .note text{ fill:var(--note-text); }
+
+  @keyframes coinSpin{ from{ transform:rotateY(0deg); } to{ transform:rotateY(360deg); } }
+  @keyframes floatY{ 0%,100%{ transform:translateY(0) rotate(-4deg); } 50%{ transform:translateY(-18px) rotate(4deg); } }
+  @keyframes floatNote{ 0%,100%{ transform:translateY(0) rotate(-8deg); } 50%{ transform:translateY(-14px) rotate(-3deg); } }
+
+  /* =====================================================================
+     HERO DASHBOARD CARD — the page's single stat strip
+     Card discipline: every metric reads label -> value -> sub-note.
+     ===================================================================== */
+  .dash{ position:relative; z-index:2; max-width:940px; margin:clamp(48px,7vw,72px) auto 0; padding:0 clamp(18px,4vw,32px); }
+  .dash-frame{
+    background:var(--dash-frame-bg); border:1px solid var(--line-soft); border-radius:26px; padding:8px;
+    box-shadow:var(--shadow-dash); transform-style:preserve-3d; will-change:transform;
+  }
+  .dash-panel{ background:var(--surface); border:1px solid var(--line-soft); border-radius:20px; padding:clamp(20px,4vw,32px); }
+  .dash-head{ margin-bottom:24px; }
+  .dash-head .tag{ font-size:10.5px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+  .dash-head .sub{ margin-top:6px; font-size:13px; color:var(--muted-dim); }
+
+  .metric-grid{
+    display:grid; gap:1px; grid-template-columns:1fr;
+    background:var(--line-soft); border:1px solid var(--line-soft); border-radius:16px; overflow:hidden;
+  }
+  @media(min-width:620px){ .metric-grid{ grid-template-columns:repeat(3,1fr); } }
+  .metric{ background:var(--surface); padding:22px; }
+  .metric .k{ font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--muted-dim); }
+  .metric .v{ margin-top:12px; font-size:30px; font-weight:700; letter-spacing:-.02em; color:var(--heading); line-height:1.1; }
+  .metric .v small{ font-size:14px; color:var(--muted); font-weight:400; }
+  .metric .s{ margin-top:8px; font-size:12.5px; color:var(--muted); line-height:1.6; }
+
+  /* AI insight strip inside the dashboard */
+  .dash-ai{ margin-top:18px; border-left:2px solid var(--accent-border); padding:2px 0 2px 16px; }
+  .dash-ai .tag{ font-size:10.5px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--muted-dim); }
+  .dash-ai p{ margin-top:8px; font-size:13.5px; color:var(--text-soft); line-height:1.7; }
+
+  /* =====================================================================
+     SECTION HEADINGS
+     ===================================================================== */
+  .section-head{ max-width:640px; }
+  .section-head.center{ margin:0 auto; text-align:center; }
+  .section-head h2{ margin-top:16px; }
+  .section-head p{ margin-top:18px; }
+
+  /* =====================================================================
+     HOW IT WORKS — 3-step sequence, same card rhythm as the metrics
+     ===================================================================== */
+  .steps{ margin-top:60px; display:grid; grid-template-columns:1fr; gap:18px; }
+  @media(min-width:760px){ .steps{ grid-template-columns:repeat(3,1fr); } }
+  .step{
+    position:relative; background:var(--step-bg);
+    border:1px solid var(--line); border-radius:var(--r-md); padding:30px;
+    transition:border-color .3s ease, background .3s ease, transform .35s cubic-bezier(.22,1,.36,1);
+  }
+  .step:hover{ border-color:var(--accent-border-strong); background:var(--step-bg-hover); transform:translateY(-4px); }
+  .step-index{ display:block; font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--muted-dim); }
+  .step h3{ margin-top:18px; font-size:19px; }
+  .step p{ margin-top:10px; font-size:14px; color:var(--muted); line-height:1.7; }
+
+  /* =====================================================================
+     AI REVIEW — one statement, one illustrative card
+     ===================================================================== */
+  .split{ display:grid; grid-template-columns:1fr; gap:44px; align-items:center; }
+  @media(min-width:980px){ .split{ grid-template-columns:1fr 1fr; gap:70px; } }
+
+  .insight-card{
+    background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-lg);
+    padding:clamp(22px,4vw,32px); box-shadow:var(--shadow-royal);
+  }
+  .insight-head{ border-bottom:1px solid var(--line-soft); padding-bottom:18px; }
+  .insight-head .tag{ font-size:10.5px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+  .insight-head .sub{ margin-top:6px; font-size:13px; color:var(--muted-dim); }
+  .insight-body > p{ margin-top:24px; font-size:14.5px; line-height:1.85; color:var(--text-soft); }
+  .insight-mini{
+    margin-top:24px; display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line-soft); border:1px solid var(--line-soft); border-radius:14px; overflow:hidden;
+  }
+  .insight-mini .box{ background:var(--surface-2); padding:16px 14px; }
+  .insight-mini .box .k{ font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted-dim); }
+  .insight-mini .box .v{ margin-top:9px; font-weight:700; color:var(--heading); font-size:16px; }
+  .insight-reco{ margin-top:24px; border-left:2px solid var(--accent-border); padding:2px 0 2px 16px; }
+  .insight-reco .tag{ font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--muted-dim); }
+  .insight-reco p{ margin-top:8px; font-size:13.5px; color:var(--text-soft); line-height:1.7; }
+
+  /* =====================================================================
+     TRUST — one tidy divided strip, not three scattered cards
+     NEW MOMENT 3: items stagger in when the strip enters view.
+     ===================================================================== */
+  .trust-section{ background:var(--surface); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); }
+  .trust-strip{
+    margin-top:56px; display:grid; grid-template-columns:1fr;
+    border:1px solid var(--line); border-radius:var(--r-md); background:var(--panel); overflow:hidden;
+  }
+  @media(min-width:760px){ .trust-strip{ grid-template-columns:repeat(3,1fr); } }
+  .trust-item{
+    position:relative; padding:30px clamp(22px,3vw,34px);
+    opacity:0; transform:translateY(18px);
+    transition:opacity .75s ease, transform .75s cubic-bezier(.22,1,.36,1);
+  }
+  .trust-item + .trust-item{ border-top:1px solid var(--line); }
+  @media(min-width:760px){
+    .trust-item + .trust-item{ border-top:0; border-left:1px solid var(--line); }
+  }
+  .trust-strip.in .trust-item{ opacity:1; transform:translateY(0); }
+  .trust-strip.in .trust-item:nth-child(1){ transition-delay:.05s; }
+  .trust-strip.in .trust-item:nth-child(2){ transition-delay:.17s; }
+  .trust-strip.in .trust-item:nth-child(3){ transition-delay:.29s; }
+  .trust-item h4{ font-size:15.5px; }
+  .trust-item p{ margin-top:8px; font-size:13.5px; color:var(--muted); line-height:1.7; }
+
+  /* =====================================================================
+     FINAL CTA — one flat surface, one accent hairline
+     ===================================================================== */
+  .cta-card{
+    position:relative; overflow:hidden;
+    max-width:900px; margin:0 auto; text-align:center; border-radius:32px;
+    border:1px solid var(--line);
+    background:var(--cta-grad);
+    padding:clamp(48px,7vw,84px) clamp(22px,5vw,60px);
+  }
+  .cta-card::before{
+    content:""; position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:min(340px,70%); height:1px; background:var(--royal); opacity:.5;
+  }
+  .cta-card h2{ font-size:clamp(28px,5vw,46px); color:var(--heading); }
+  .cta-card > p{ margin-top:16px; color:var(--muted); font-size:15.5px; max-width:470px; margin-left:auto; margin-right:auto; }
+  .cta-card .hero-form{ margin-top:32px; }
+
+  /* =====================================================================
+     FOOTER
+     ===================================================================== */
+  footer{ background:var(--bg); color:var(--muted); padding:64px 0 32px; border-top:1px solid var(--line-soft); }
+  .footer-top{ display:grid; grid-template-columns:1fr; gap:34px; padding-bottom:34px; border-bottom:1px solid var(--line-soft); }
+  @media(min-width:720px){ .footer-top{ grid-template-columns:1.6fr 1fr 1fr; } }
+  .footer-brand p{ margin-top:14px; font-size:13.5px; color:var(--muted-dim); max-width:300px; line-height:1.7; }
+  .footer-col h5{ font-size:11.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--heading); margin-bottom:15px; }
+  .footer-col ul{ display:flex; flex-direction:column; gap:11px; }
   .footer-col a{ font-size:13.5px; color:var(--muted); transition:color .2s ease; }
-  .footer-col a:hover{ color:#fff; }
-  .footer-bottom{ padding-top:22px; display:flex; flex-direction:column; gap:10px; font-size:12px; color:var(--muted-dim); }
+  .footer-col a:hover{ color:var(--heading); }
+  .footer-bottom{ padding-top:24px; display:flex; flex-direction:column; gap:12px; font-size:12px; color:var(--muted-dim); }
   @media(min-width:768px){ .footer-bottom{ flex-direction:row; justify-content:space-between; align-items:flex-start; } }
-  .footer-bottom .disclaimer{ max-width:520px; }
+  .footer-bottom .disclaimer{ max-width:560px; line-height:1.6; }
   @media(min-width:768px){ .footer-bottom .disclaimer{ text-align:right; } }
 
-  /* ================= MODAL ================= */
+  /* =====================================================================
+     WAITLIST MODAL
+     ===================================================================== */
   #waitlistModal{
     position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center;
-    background:rgba(0,0,0,.75); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    background:var(--backdrop); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
     padding:16px; opacity:0; transition:opacity .3s ease;
   }
   #waitlistModal.open{ display:flex; }
   #waitlistModal.visible{ opacity:1; }
   .modal-content{
     width:100%; max-width:440px; max-height:90vh; overflow-y:auto;
-    background:#0B111A; border:1px solid var(--line-soft); border-radius:26px;
-    padding:24px; box-shadow:var(--shadow-card); transform:translateY(18px); transition:transform .3s ease;
+    background:var(--surface); border:1px solid var(--line); border-radius:24px;
+    padding:26px; box-shadow:var(--shadow-card); transform:translateY(18px); transition:transform .3s ease;
   }
   @media(min-width:480px){ .modal-content{ padding:34px; } }
   #waitlistModal.visible .modal-content{ transform:translateY(0); }
   .modal-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
-  .modal-head .tag{ font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); }
-  .modal-head h2{ margin-top:10px; font-size:22px; }
+  .modal-head .tag{ font-size:10.5px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+  .modal-head h2{ margin-top:10px; font-size:23px; }
   .modal-close{
-    width:34px; height:34px; flex:none; border-radius:999px; border:1px solid var(--line-soft); background:transparent;
-    color:var(--muted); display:flex; align-items:center; justify-content:center; font-size:16px; transition:.2s ease;
+    width:36px; height:36px; flex:none; border-radius:999px; border:1px solid var(--line-soft); background:transparent;
+    color:var(--muted); display:flex; align-items:center; justify-content:center; font-size:17px; transition:.2s ease;
   }
-  .modal-close:hover{ background:rgba(255,255,255,.05); color:#fff; }
+  .modal-close:hover{ background:var(--elev-2); color:var(--heading); }
   .modal-content p.desc{ margin-top:12px; font-size:14px; color:var(--muted); line-height:1.65; }
   .modal-content form{ margin-top:22px; }
   .modal-note{ margin-top:16px; text-align:center; font-size:12px; color:var(--muted-dim); }
-  .modal-success{ display:none; text-align:center; padding:20px 0; }
+  .modal-success{ display:none; text-align:center; padding:16px 0; }
   .modal-success.show{ display:block; }
   .modal-success .check{
-    width:56px; height:56px; margin:0 auto; border-radius:50%; background:var(--green-bg); color:var(--green);
-    border:1px solid rgba(52,211,153,.25);
-    display:flex; align-items:center; justify-content:center; font-size:24px;
+    width:58px; height:58px; margin:0 auto; border-radius:50%; background:var(--green-bg); color:var(--green);
+    border:1px solid var(--green-border); display:flex; align-items:center; justify-content:center;
   }
-  .modal-success h3{ margin-top:18px; font-size:19px; }
+  .modal-success .check svg{ width:26px; height:26px; }
+  .modal-success h3{ margin-top:18px; font-size:20px; }
   .modal-success p{ margin-top:8px; font-size:13.5px; color:var(--muted); }
   .modal-success .btn{ margin-top:24px; }
   body.modal-open{ overflow:hidden; }
-
-  .sr-only{ position:absolute; left:-9999px; }
 </style>
 </head>
 
-<body class="noise">
+<body>
 
-  <!-- ================= HEADER ================= -->
+  <!-- Scroll progress indicator -->
+  <div id="scrollProgress"></div>
+
+  <!-- ===================================================================
+       HEADER
+       =================================================================== -->
   <header id="navbar">
     <div class="nav-inner">
       <a href="#" class="logo" aria-label="WEALTHZY home">
-        <!-- Swap FullLogo.png with your logo file; resize it via .logo-mark in the CSS above -->
+        <!-- Swap FullLogo.png with your logo; resize via .logo-mark in the CSS above -->
         <img src="FullLogo.png" alt="WEALTHZY" class="logo-mark">
       </a>
 
       <nav class="main-nav" aria-label="Main navigation">
-        <a href="#platform">Platform</a>
-        <a href="#intelligence">Intelligence</a>
-        <a href="#about">About</a>
+        <a href="#how">How it works</a>
+        <a href="#insight">AI review</a>
+        <a href="#trust">Why us</a>
       </nav>
 
       <div class="nav-actions">
-        <button class="btn btn-primary btn-sm" onclick="openWaitlist()">Join Waitlist</button>
+        <button class="btn btn-primary btn-sm" onclick="openWaitlist()">Join waitlist</button>
+        <button type="button" class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Switch to light mode" title="Switch to light mode">
+          <svg id="themeIconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+        </button>
         <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
           <svg id="menuIconOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
           <svg id="menuIconClose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
     </div>
+
+    <!-- Mobile dropdown menu -->
     <nav id="mobileMenu" aria-label="Mobile navigation">
-      <a href="#platform" onclick="closeMobileMenu()">Platform</a>
-      <a href="#intelligence" onclick="closeMobileMenu()">Intelligence</a>
-      <a href="#about" onclick="closeMobileMenu()">About</a>
+      <a href="#how" onclick="closeMobileMenu()">How it works</a>
+      <a href="#insight" onclick="closeMobileMenu()">AI review</a>
+      <a href="#trust" onclick="closeMobileMenu()">Why us</a>
+      <button type="button" class="theme-toggle-mobile" id="themeToggleMobile" onclick="toggleTheme()" aria-label="Switch to light mode">
+        <svg id="themeIconSunMobile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg id="themeIconMoonMobile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+        <span id="themeToggleLabel">Light mode</span>
+      </button>
     </nav>
   </header>
 
   <main>
-    <!-- ================= HERO ================= -->
+    <!-- =================================================================
+         HERO — headline + inline email capture + the stat strip
+         ================================================================= -->
     <section class="hero">
-      <div class="grid-lines" style="position:absolute; inset:0; z-index:0;"></div>
-      <div class="hero-glowspot"></div>
+      <div class="hero-glow"></div>
 
-      <div class="hero-inner">
-        <div class="reveal eyebrow"><span class="dot"></span>Wealth intelligence, reimagined</div>
-        <h1 class="reveal">Make smarter <span class="accent">wealth decisions.</span></h1>
-        <p class="reveal lead">WEALTHZY brings investment research, portfolio intelligence and financial planning into one powerful layer — built for investors who want clarity before action.</p>
-        <div class="reveal hero-ctas">
-          <button class="btn btn-primary" onclick="openWaitlist()">Get Early Access →</button>
-          <a href="#platform" class="btn btn-outline">Explore WEALTHZY</a>
-        </div>
-        <p class="reveal hero-note">Built for investors who want clarity before action.</p>
+      <!-- Decorative money layer: 2 coins + 1 paper note -->
+      <div class="money-layer" aria-hidden="true">
+        <div class="coin c1"><div class="spin"><div class="face">&#8377;</div><div class="face back">&#8377;</div></div></div>
+        <div class="coin c2"><div class="spin"><div class="face">$</div><div class="face back">$</div></div></div>
+
+        <svg class="note n1" viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="118" height="58" rx="7" fill="#122A5C" stroke="#3E72FF" stroke-opacity="0.5"/>
+          <circle cx="60" cy="30" r="14" fill="#1E3D82" stroke="#6E93FF" stroke-opacity="0.6"/>
+          <text x="60" y="36" text-anchor="middle" fill="#AFC4FF" font-size="15" font-family="Poppins, sans-serif" font-weight="700">&#8377;</text>
+          <rect x="12" y="12" width="20" height="5" rx="2.5" fill="#3E72FF" fill-opacity="0.55"/>
+          <rect x="88" y="43" width="20" height="5" rx="2.5" fill="#3E72FF" fill-opacity="0.55"/>
+        </svg>
       </div>
 
-      <div class="reveal hero-card">
-        <div class="hero-card-inner">
-          <div class="hero-card-panel">
-            <div class="hero-card-head">
-              <div>
-                <p class="tag">WEALTHZY Intelligence</p>
-                <p class="sub">Your financial command center</p>
-              </div>
-              <span class="status-chip"><span class="dot"></span>System ready</span>
-            </div>
-            <div class="metric-grid">
-              <div class="metric-card">
-                <p class="k">Portfolio Health</p>
-                <p class="v">84<small>/100</small></p>
-                <div class="bar-track"><div class="bar-fill" style="width:84%"></div></div>
-              </div>
-              <div class="metric-card">
-                <p class="k">Diversification</p>
-                <p class="v" style="font-size:20px;">Strong</p>
-                <p class="badge-ok">Well balanced</p>
-              </div>
-              <div class="metric-card">
-                <p class="k">AI Insight</p>
-                <p style="margin-top:12px; font-size:13.5px; color:rgba(244,247,250,.75); line-height:1.6;">Your portfolio may have higher exposure to one sector.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= STAT STRIP ================= -->
-    <section class="stat-strip">
       <div class="wrap">
-        <div class="stat-grid">
-          <div><p class="num">01</p><p class="lbl">Intelligence Layer</p></div>
-          <div><p class="num">360°</p><p class="lbl">Wealth View</p></div>
-          <div><p class="num">AI</p><p class="lbl">Powered Research</p></div>
-          <div><p class="num">24/7</p><p class="lbl">Market Awareness</p></div>
-        </div>
-      </div>
-    </section>
+        <!-- Staggered page-load sequence: eyebrow -> headline -> lead -> form -->
+        <div class="hero-inner hero-seq">
+          <span class="eyebrow">Pre-launch</span>
+          <h1>Your portfolio, reviewed by AI.<br><span class="grad">Guided by a real adviser.</span></h1>
+          <p class="lead">WEALTHZY reads your investments, surfaces what's really driving your risk and returns, then matches you with a SEBI-registered RIA to act on it.</p>
 
-    <!-- ================= PLATFORM ================= -->
-    <section id="platform">
-      <div class="wrap">
-        <div class="reveal section-head">
-          <p class="eyebrow"><span class="dot"></span>The platform</p>
-          <h2 class="h2">One intelligence layer for your entire wealth.</h2>
-          <p class="lead">Stop jumping between research tools, portfolio trackers and financial planners. WEALTHZY is designed to bring the important pieces together, the way a dedicated wealth manager would.</p>
-        </div>
-
-        <div class="feature-grid">
-          <article class="feature-card reveal">
-            <div class="feature-icon">✦</div>
-            <p class="num">01</p>
-            <h3>Research</h3>
-            <p>Fundamental, valuation and market research in one intelligent workspace.</p>
-          </article>
-          <article class="feature-card reveal">
-            <div class="feature-icon">◈</div>
-            <p class="num">02</p>
-            <h3>Portfolio</h3>
-            <p>Understand diversification, risk, performance and portfolio health.</p>
-          </article>
-          <article class="feature-card reveal">
-            <div class="feature-icon">⌁</div>
-            <p class="num">03</p>
-            <h3>Planning</h3>
-            <p>Connect investments to goals, risk and your long-term financial roadmap.</p>
-          </article>
-          <article class="feature-card reveal">
-            <div class="feature-icon">↗</div>
-            <p class="num">04</p>
-            <h3>Insights</h3>
-            <p>Turn financial information into clear, explainable insights and actions.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= INTELLIGENCE ================= -->
-    <section id="intelligence">
-      <div class="wrap">
-        <div class="split">
-          <div class="reveal">
-            <p class="eyebrow"><span class="dot"></span>Intelligence, not noise</p>
-            <h2 class="h2" style="margin-top:14px;">Information becomes useful when it becomes understandable.</h2>
-            <p class="lead" style="margin-top:16px;">WEALTHZY is being designed to analyze financial information and explain what matters, why it matters, and how it connects to your portfolio and goals.</p>
-
-            <div style="margin-top:28px;">
-              <div class="step-row">
-                <span class="step-num">01</span>
-                <div><h4>Context</h4><p>See the bigger picture behind a number or market movement.</p></div>
-              </div>
-              <div class="step-row">
-                <span class="step-num">02</span>
-                <div><h4>Explanation</h4><p>Understand the reasoning instead of receiving unexplained signals.</p></div>
-              </div>
-              <div class="step-row">
-                <span class="step-num">03</span>
-                <div><h4>Action</h4><p>Identify what deserves attention before making a decision.</p></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="reveal insight-card">
-            <div class="insight-head">
-              <div>
-                <p class="tag">AI Portfolio Insight</p>
-                <p class="sub">Generated from your portfolio</p>
-              </div>
-              <span class="insight-dot"></span>
-            </div>
-            <div class="insight-body">
-              <p>Your portfolio shows a concentration in <strong style="color:#fff;">financial services</strong>. Diversification across sectors may help reduce concentration risk.</p>
-              <div class="insight-mini">
-                <div class="box"><p class="k">Risk</p><p class="v" style="color:var(--amber);">Moderate</p></div>
-                <div class="box"><p class="k">Sector</p><p class="v">31%</p></div>
-                <div class="box"><p class="k">Signal</p><p class="v" style="color:var(--gold);">Review</p></div>
-              </div>
-              <div class="insight-reco">
-                <p class="tag">WEALTHZY recommendation</p>
-                <p>Review sector allocation before adding further exposure.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="trust-row">
-          <div class="trust-item reveal">
-            <div class="ic">🔒</div>
-            <div><h4>Bank-grade security</h4><p>Your data is encrypted in transit and at rest, always.</p></div>
-          </div>
-          <div class="trust-item reveal">
-            <div class="ic">✓</div>
-            <div><h4>No spam, ever</h4><p>Only meaningful updates as WEALTHZY gets closer to launch.</p></div>
-          </div>
-          <div class="trust-item reveal">
-            <div class="ic">🎓</div>
-            <div><h4>Built by finance professionals</h4><p>Designed with real research and portfolio workflows in mind.</p></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= ABOUT ================= -->
-    <section id="about" class="about-section" style="background:var(--bg); border-top:1px solid var(--line-soft);">
-      <div class="about-glow"></div>
-      <div class="wrap" style="position:relative;">
-        <div class="reveal">
-          <p class="eyebrow" style="justify-content:center;"><span class="dot"></span>The WEALTHZY vision</p>
-          <h2 class="h2">Better information.<br>Better understanding.<br><span style="color:rgba(255,255,255,.35);">Better futures.</span></h2>
-          <p class="lead">Markets are complex. Your financial decisions shouldn't have to be. WEALTHZY is being built to make wealth intelligence more accessible, transparent and useful.</p>
-        </div>
-        <div class="gold-rule reveal"></div>
-      </div>
-    </section>
-
-    <!-- ================= CTA ================= -->
-    <section class="cta-section">
-      <div class="wrap">
-        <div class="reveal cta-card">
-          <p class="eyebrow">WEALTHZY is coming</p>
-          <h2>Be first to experience it.</h2>
-          <p>Join the early access list and get meaningful updates as WEALTHZY gets closer to launch.</p>
-
-          <form id="inlineForm" class="waitlist-form" novalidate onsubmit="handleInlineSubmit(event)">
+          <!-- Inline waitlist form (email only) -->
+          <form id="heroForm" class="hero-form" novalidate onsubmit="handleInlineSubmit(event)">
             <div class="form-row">
               <div class="field">
                 <label for="inlineEmail" class="sr-only">Email address</label>
                 <input id="inlineEmail" type="email" required autocomplete="email" inputmode="email"
-                  placeholder="Enter your email address" aria-describedby="inlineEmailError">
-                <p id="inlineEmailError" class="field-error" role="alert">Please enter a valid email address.</p>
+                  placeholder="you@example.com" aria-describedby="inlineEmailError">
+                <p id="inlineEmailError" class="field-error" role="alert">Enter a valid email address.</p>
               </div>
-              <button type="submit" class="btn btn-primary">Join Waitlist →</button>
+              <button type="submit" class="btn btn-primary">Join waitlist <span class="arrow">&rarr;</span></button>
             </div>
+            <p class="hero-microcopy">Email only &middot; No spam, just launch news</p>
+            <p id="inlineSuccessMsg" role="status">You're on the list — we'll email you when early access opens.</p>
           </form>
-          <p id="inlineSuccessMsg" role="status">You're on the list. We'll be in touch.</p>
+        </div>
+      </div>
+
+      <!-- The stat strip: one illustrative AI portfolio review -->
+      <div class="dash hero-seq-late" id="dash">
+        <div class="dash-frame" id="dashTilt">
+          <div class="dash-panel cream-surface">
+            <div class="dash-head">
+              <p class="tag">WEALTHZY &middot; AI portfolio review</p>
+              <p class="sub">Illustrative preview — sample data</p>
+            </div>
+
+            <div class="metric-grid">
+              <div class="metric">
+                <p class="k">Portfolio health</p>
+                <p class="v"><span id="healthValue">0</span><small>/100</small></p>
+                <p class="s">Asset allocation, fund overlap and cost, scored together</p>
+              </div>
+              <div class="metric">
+                <p class="k">CAGR (3Y)</p>
+                <p class="v">14.6%</p>
+                <p class="s">+3.4% vs. benchmark return</p>
+              </div>
+              <div class="metric">
+                <p class="k">Beta / Std. dev.</p>
+                <p class="v">0.92 <span style="color:var(--muted);font-size:18px;font-weight:400;">/</span> 11.3%</p>
+                <p class="s">vs. Nifty 50</p>
+              </div>
+            </div>
+
+            <div class="dash-ai">
+              <p class="tag">AI insight</p>
+              <p>Your risk-adjusted return (Sharpe) is a healthy 1.28, but two large-cap funds share 24% fund overlap, lifting equity asset allocation to 62%. A rebalance before your next quarterly review could tighten risk without giving up much return.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         HOW IT WORKS — genuine 3-step sequence
+         ================================================================= -->
+    <section id="how">
+      <div class="wrap">
+        <div class="reveal section-head center">
+          <span class="eyebrow">How it works</span>
+          <h2 class="h2">From raw portfolio to real advice.</h2>
+          <p class="lead">The first two steps are automated and instant. The third connects you to someone licensed to advise.</p>
+        </div>
+
+        <div class="steps stagger">
+          <article class="step reveal cream-surface">
+            <span class="step-index">Step 01</span>
+            <h3>Share your portfolio</h3>
+            <p>Add your holdings and WEALTHZY reads your asset allocation, fund overlap and sector concentration in seconds.</p>
+          </article>
+          <article class="step reveal cream-surface">
+            <span class="step-index">Step 02</span>
+            <h3>Get an AI review</h3>
+            <p>Beta, standard deviation, CAGR and risk-adjusted return, explained in plain language — with what to watch.</p>
+          </article>
+          <article class="step reveal cream-surface">
+            <span class="step-index">Step 03</span>
+            <h3>Match with an RIA</h3>
+            <p>When you want to act, we connect you with a SEBI-registered investment adviser to plan rebalancing and next steps.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         AI REVIEW — one statement, one illustrative card
+         ================================================================= -->
+    <section id="insight" style="background:var(--surface); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);">
+      <div class="wrap">
+        <div class="split">
+          <div class="reveal">
+            <span class="eyebrow">The AI review</span>
+            <h2 class="h2" style="margin-top:16px;">Numbers become useful when they're understood.</h2>
+            <p class="lead" style="margin-top:18px;">Most tools hand you a wall of ratios. WEALTHZY explains what's driving them — from allocation drift to benchmark-relative performance — so you know what actually needs attention.</p>
+          </div>
+
+          <!-- Illustrative AI insight card -->
+          <div class="reveal insight-card">
+            <div class="insight-head">
+              <p class="tag">AI portfolio insight</p>
+              <p class="sub">Illustrative — sample portfolio</p>
+            </div>
+            <div class="insight-body">
+              <p>Your portfolio's <strong style="color:var(--heading);">standard deviation</strong> has risen to 13.8% — running hotter than its 3-year CAGR of 12.4% would suggest. Two mid-cap funds overlap heavily in their top holdings.</p>
+              <div class="insight-mini">
+                <div class="box"><p class="k">CAGR (3Y)</p><p class="v">12.4%</p></div>
+                <div class="box"><p class="k">Std. dev.</p><p class="v" style="color:var(--amber);">13.8%</p></div>
+                <div class="box"><p class="k">Fund overlap</p><p class="v">31%</p></div>
+              </div>
+              <div class="insight-reco">
+                <p class="tag">WEALTHZY suggestion</p>
+                <p>Rebalance the overlapping mid-cap exposure before your next quarterly review to bring risk back toward your benchmark.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         TRUST — a single divided strip
+         ================================================================= -->
+    <section id="trust" class="trust-section">
+      <div class="wrap">
+        <div class="reveal section-head center">
+          <span class="eyebrow">Why WEALTHZY</span>
+          <h2 class="h2">AI for the read. A human for the call.</h2>
+        </div>
+
+        <div class="trust-strip" id="trustStrip">
+          <div class="trust-item">
+            <h4>Advice from a registered RIA</h4>
+            <p>You're matched with a SEBI-registered adviser — not an anonymous tip or a black-box signal.</p>
+          </div>
+          <div class="trust-item">
+            <h4>Explainable, not opaque</h4>
+            <p>Every metric — beta, CAGR, risk-adjusted return — comes with the reasoning behind it.</p>
+          </div>
+          <div class="trust-item">
+            <h4>Your data stays yours</h4>
+            <p>Encrypted in transit and at rest. We'll only ever email you about your place in line.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         FINAL CTA
+         ================================================================= -->
+    <section>
+      <div class="wrap">
+        <div class="reveal cta-card cream-surface" id="ctaCard">
+          <h2>Get your AI portfolio review first.</h2>
+          <p>Early access is limited. Join the waitlist with just your email and we'll reach out the moment it opens.</p>
+
+          <!-- CTA opens the modal for the email capture flow -->
+          <div class="hero-form" style="max-width:460px;">
+            <div class="form-row" style="justify-content:center;">
+              <button class="btn btn-primary btn-block" onclick="openWaitlist()">Join the waitlist <span class="arrow">&rarr;</span></button>
+            </div>
+            <p class="hero-microcopy">Takes 10 seconds &middot; Email only &middot; No spam</p>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- ================= FOOTER ================= -->
+  <!-- ===================================================================
+       FOOTER
+       =================================================================== -->
   <footer>
     <div class="wrap">
       <div class="footer-top">
@@ -627,204 +1042,379 @@
           <a href="#" class="logo" aria-label="WEALTHZY home">
             <img src="FullLogo.png" alt="WEALTHZY" class="logo-mark">
           </a>
-          <p>Intelligent Wealth. Better Futures. Investment research, portfolio intelligence and financial planning in one layer.</p>
+          <p>AI reviews your portfolio and matches you with a SEBI-registered RIA. Clearer decisions, guided by real advice.</p>
         </div>
         <div class="footer-col">
-          <h5>Platform</h5>
+          <h5>Product</h5>
           <ul>
-            <li><a href="#platform">Research</a></li>
-            <li><a href="#platform">Portfolio</a></li>
-            <li><a href="#platform">Planning</a></li>
-            <li><a href="#platform">Insights</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h5>Company</h5>
-          <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="#intelligence">Intelligence</a></li>
-            <li><a href="#" onclick="openWaitlist(); return false;">Contact</a></li>
+            <li><a href="#how">How it works</a></li>
+            <li><a href="#insight">AI review</a></li>
+            <li><a href="#trust">Why us</a></li>
+            <li><a href="#" onclick="openWaitlist(); return false;">Join waitlist</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h5>Legal</h5>
           <ul>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Use</a></li>
+            <li><a href="#">Privacy policy</a></li>
+            <li><a href="#">Terms of use</a></li>
             <li><a href="#">Disclaimer</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>© 2026 WEALTHZY. All rights reserved.</p>
-        <p class="disclaimer">WEALTHZY is under development. Information presented is for informational purposes only and does not constitute financial advice.</p>
+        <p>&copy; 2026 WEALTHZY. All rights reserved.</p>
+        <p class="disclaimer">WEALTHZY is pre-launch. All figures shown are illustrative and for informational purposes only — they are not investment advice or a guarantee of returns. Investment advice is provided by SEBI-registered investment advisers.</p>
       </div>
     </div>
   </footer>
 
-  <!-- ================= MODAL ================= -->
+  <!-- ===================================================================
+       WAITLIST MODAL (email only, with success state)
+       =================================================================== -->
   <div id="waitlistModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div id="modalContent" class="modal-content">
+    <div class="modal-content">
       <div class="modal-head">
         <div>
-          <p class="tag">Early access</p>
-          <h2 id="modalTitle">Join WEALTHZY</h2>
+          <p class="tag">Join the waitlist</p>
+          <h2 id="modalTitle">Be first in line</h2>
         </div>
-        <button class="modal-close" onclick="closeWaitlist()" aria-label="Close">✕</button>
+        <button class="modal-close" onclick="closeWaitlist()" aria-label="Close">&#10005;</button>
       </div>
 
+      <!-- Form state -->
       <div id="modalFormState">
-        <p class="desc">Be among the first to experience a smarter way to understand your wealth.</p>
-
+        <p class="desc">Drop your email and we'll invite you the moment early access opens. That's the only thing we'll use it for.</p>
         <form id="modalForm" novalidate onsubmit="handleModalSubmit(event)">
           <div class="field">
             <label for="modalEmail" class="sr-only">Email address</label>
             <input id="modalEmail" type="email" required autocomplete="email" inputmode="email"
               placeholder="you@example.com" aria-describedby="modalEmailError">
-            <p id="modalEmailError" class="field-error" role="alert">Please enter a valid email address.</p>
+            <p id="modalEmailError" class="field-error" role="alert">Enter a valid email address.</p>
           </div>
-          <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">Join the Waitlist</button>
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">Join the waitlist</button>
         </form>
-        <p class="modal-note">No spam. Only meaningful WEALTHZY updates.</p>
+        <p class="modal-note">Email only &middot; No spam &middot; Unsubscribe anytime</p>
       </div>
 
+      <!-- Success state -->
       <div id="modalSuccessState" class="modal-success">
-        <div class="check">✓</div>
+        <div class="check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        </div>
         <h3>You're on the list.</h3>
-        <p>We'll be in touch when WEALTHZY is ready.</p>
-        <button class="btn btn-outline" onclick="closeWaitlist()">Close</button>
+        <p>We'll email you as soon as early access opens.</p>
+        <button class="btn btn-ghost" onclick="closeWaitlist()">Done</button>
       </div>
     </div>
   </div>
 
   <script>
-    /* ================= EMAIL VALIDATION ================= */
-    function isValidEmail(value) {
+    /* =================================================================
+       EMAIL VALIDATION
+       Stricter than the browser default: rejects consecutive dots,
+       malformed domains, missing TLD and over-length local parts.
+       ================================================================= */
+    function isValidEmail(value){
       var email = value.trim();
-      if (email.length === 0 || email.length > 254) return false;
+      if(email.length === 0 || email.length > 254) return false;
       var pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
-      if (!pattern.test(email)) return false;
+      if(!pattern.test(email)) return false;
       var parts = email.split('@');
-      if (parts[0].length > 64) return false;
-      if (email.indexOf('..') !== -1) return false;
+      if(parts[0].length > 64) return false;        // local part length cap
+      if(email.indexOf('..') !== -1) return false;  // no consecutive dots
       return true;
     }
 
-    function setFieldError(input, errorEl, show) {
+    function setFieldError(input, errorEl, show){
       input.classList.toggle('input-error', show);
       input.setAttribute('aria-invalid', show ? 'true' : 'false');
       errorEl.classList.toggle('show', show);
     }
 
-    function validateField(input, errorEl) {
+    function validateField(input, errorEl){
       var valid = isValidEmail(input.value);
       setFieldError(input, errorEl, !valid);
       return valid;
     }
 
-    function handleModalSubmit(event) {
+    /* Hero (inline) form submit */
+    function handleInlineSubmit(event){
+      event.preventDefault();
+      var input = document.getElementById('inlineEmail');
+      var errorEl = document.getElementById('inlineEmailError');
+      if(!validateField(input, errorEl)){ input.focus(); return; }
+      input.value = '';
+      document.getElementById('inlineSuccessMsg').classList.add('show');
+      /* NOTE: wire this up to your email backend / form service to actually store the address */
+    }
+
+    /* Modal form submit */
+    function handleModalSubmit(event){
       event.preventDefault();
       var input = document.getElementById('modalEmail');
       var errorEl = document.getElementById('modalEmailError');
-      if (!validateField(input, errorEl)) { input.focus(); return; }
+      if(!validateField(input, errorEl)){ input.focus(); return; }
       document.getElementById('modalFormState').style.display = 'none';
       document.getElementById('modalSuccessState').classList.add('show');
       input.value = '';
       setFieldError(input, errorEl, false);
+      /* NOTE: wire this up to your email backend / form service to actually store the address */
     }
 
-    function handleInlineSubmit(event) {
-      event.preventDefault();
-      var input = document.getElementById('inlineEmail');
-      var errorEl = document.getElementById('inlineEmailError');
-      if (!validateField(input, errorEl)) { input.focus(); return; }
-      input.value = '';
-      document.getElementById('inlineSuccessMsg').classList.add('show');
-    }
-
-    ['modalEmail', 'inlineEmail'].forEach(function (id) {
+    /* Clear the error live as soon as the input becomes valid */
+    ['modalEmail','inlineEmail'].forEach(function(id){
       var input = document.getElementById(id);
       var errorEl = document.getElementById(id + 'Error');
-      input.addEventListener('input', function () {
-        if (errorEl.classList.contains('show') && isValidEmail(input.value)) {
+      input.addEventListener('input', function(){
+        if(errorEl.classList.contains('show') && isValidEmail(input.value)){
           setFieldError(input, errorEl, false);
         }
       });
     });
 
-    /* ================= MODAL OPEN/CLOSE ================= */
+    /* =================================================================
+       WAITLIST MODAL — open / close (X, backdrop, Escape)
+       ================================================================= */
     var modal = document.getElementById('waitlistModal');
     var modalFormState = document.getElementById('modalFormState');
     var modalSuccessState = document.getElementById('modalSuccessState');
 
-    function openWaitlist() {
+    function openWaitlist(){
       modal.classList.add('open');
       document.body.classList.add('modal-open');
-      requestAnimationFrame(function () { modal.classList.add('visible'); });
+      requestAnimationFrame(function(){ modal.classList.add('visible'); });
       modalFormState.style.display = 'block';
       modalSuccessState.classList.remove('show');
-      setTimeout(function () {
+      setTimeout(function(){
         var el = document.getElementById('modalEmail');
-        if (el) el.focus();
+        if(el) el.focus();
       }, 250);
     }
 
-    function closeWaitlist() {
+    function closeWaitlist(){
       modal.classList.remove('visible');
       document.body.classList.remove('modal-open');
-      setTimeout(function () { modal.classList.remove('open'); }, 250);
+      setTimeout(function(){ modal.classList.remove('open'); }, 250);
     }
 
-    modal.addEventListener('click', function (event) {
-      if (event.target === modal) closeWaitlist();
+    modal.addEventListener('click', function(event){
+      if(event.target === modal) closeWaitlist();   // backdrop click
+    });
+    document.addEventListener('keydown', function(event){
+      if(event.key === 'Escape' && modal.classList.contains('open')) closeWaitlist();
     });
 
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape' && modal.classList.contains('open')) closeWaitlist();
-    });
+    /* =================================================================
+       THEME SWITCH (dark <-> light)
+       State lives in a JS variable only — no localStorage/sessionStorage,
+       so it resets to dark on reload. Only colors change, so the tilt,
+       parallax, scroll progress, coin and reveal logic are untouched.
+       ================================================================= */
+    var currentTheme = 'dark';
+    var themeToggleBtn = document.getElementById('themeToggle');
+    var themeToggleMobileBtn = document.getElementById('themeToggleMobile');
+    var themeIconSun = document.getElementById('themeIconSun');
+    var themeIconMoon = document.getElementById('themeIconMoon');
+    var themeIconSunMobile = document.getElementById('themeIconSunMobile');
+    var themeIconMoonMobile = document.getElementById('themeIconMoonMobile');
+    var themeToggleLabel = document.getElementById('themeToggleLabel');
 
-    /* ================= MOBILE MENU ================= */
+    function applyTheme(theme){
+      currentTheme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+
+      var goingToLight = (theme === 'dark');          // what the button will do next
+      var label = goingToLight ? 'Switch to light mode' : 'Switch to dark mode';
+
+      /* Sun icon while dark (click = go light), moon icon while light */
+      if(themeIconSun)  themeIconSun.style.display  = goingToLight ? 'block' : 'none';
+      if(themeIconMoon) themeIconMoon.style.display = goingToLight ? 'none'  : 'block';
+      if(themeIconSunMobile)  themeIconSunMobile.style.display  = goingToLight ? 'block' : 'none';
+      if(themeIconMoonMobile) themeIconMoonMobile.style.display = goingToLight ? 'none'  : 'block';
+
+      if(themeToggleBtn){
+        themeToggleBtn.setAttribute('aria-label', label);
+        themeToggleBtn.setAttribute('title', label);
+      }
+      if(themeToggleMobileBtn) themeToggleMobileBtn.setAttribute('aria-label', label);
+      if(themeToggleLabel) themeToggleLabel.textContent = goingToLight ? 'Light mode' : 'Dark mode';
+    }
+
+    function toggleTheme(){
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    }
+
+    /* Dark is the default brand presentation */
+    applyTheme('dark');
+
+    /* =================================================================
+       MOBILE MENU
+       ================================================================= */
     var mobileMenu = document.getElementById('mobileMenu');
     var menuToggle = document.getElementById('menuToggle');
     var menuIconOpen = document.getElementById('menuIconOpen');
     var menuIconClose = document.getElementById('menuIconClose');
 
-    function toggleMobileMenu() {
+    function toggleMobileMenu(){
       var isOpen = mobileMenu.style.display === 'flex';
       isOpen ? closeMobileMenu() : openMobileMenu();
     }
-    function openMobileMenu() {
+    function openMobileMenu(){
       mobileMenu.style.display = 'flex';
       menuIconOpen.style.display = 'none';
       menuIconClose.style.display = 'block';
       menuToggle.setAttribute('aria-expanded', 'true');
     }
-    function closeMobileMenu() {
+    function closeMobileMenu(){
       mobileMenu.style.display = 'none';
       menuIconOpen.style.display = 'block';
       menuIconClose.style.display = 'none';
       menuToggle.setAttribute('aria-expanded', 'false');
     }
-    window.addEventListener('resize', function () {
-      if (window.innerWidth >= 860) closeMobileMenu();
+    /* Close the mobile menu if resized up to desktop width */
+    window.addEventListener('resize', function(){
+      if(window.innerWidth >= 880) closeMobileMenu();
     });
 
-    /* ================= NAV SCROLL SHADOW ================= */
-    window.addEventListener('scroll', function () {
-      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
-    }, { passive: true });
+    /* =================================================================
+       MOTION PREFERENCES
+       ================================================================= */
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var canHoverTilt = window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReducedMotion;
 
-    /* ================= REVEAL ON SCROLL ================= */
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('show');
-          observer.unobserve(entry.target);
+    /* =================================================================
+       NEW: HERO PAGE-LOAD SEQUENCE
+       Adds .loaded, which starts the staggered hero animation. Runs once.
+       ================================================================= */
+    function startHeroSequence(){ document.body.classList.add('loaded'); }
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', function(){ requestAnimationFrame(startHeroSequence); });
+    } else {
+      requestAnimationFrame(startHeroSequence);
+    }
+
+    /* =================================================================
+       SCROLL: progress bar + nav shadow + parallax on hero glow
+       (throttled with requestAnimationFrame)
+       ================================================================= */
+    var scrollProgressEl = document.getElementById('scrollProgress');
+    var navbarEl = document.getElementById('navbar');
+    var heroGlow = document.querySelector('.hero-glow');
+    var scrollTicking = false;
+
+    function updateOnScroll(){
+      var scrollY = window.scrollY || window.pageYOffset;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+      if(scrollProgressEl) scrollProgressEl.style.width = pct + '%';
+      if(navbarEl) navbarEl.classList.toggle('scrolled', scrollY > 20);
+      if(!prefersReducedMotion && heroGlow){
+        heroGlow.style.transform = 'translateX(-50%) translateY(' + (scrollY * 0.16) + 'px)';
+      }
+      scrollTicking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if(!scrollTicking){ requestAnimationFrame(updateOnScroll); scrollTicking = true; }
+    }, { passive:true });
+    updateOnScroll();
+
+    /* =================================================================
+       3D TILT ON HOVER — dashboard card only (desktop / precise pointer)
+       ================================================================= */
+    function attachTilt(el, maxDeg, scaleTo){
+      if(!el) return;
+      el.addEventListener('mousemove', function(e){
+        var rect = el.getBoundingClientRect();
+        var relX = (e.clientX - rect.left) / rect.width;
+        var relY = (e.clientY - rect.top) / rect.height;
+        var rotateY = (relX - 0.5) * (maxDeg * 2);
+        var rotateX = (0.5 - relY) * (maxDeg * 2);
+        el.style.transition = 'transform .08s linear';
+        el.style.transform = 'perspective(900px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale(' + scaleTo + ')';
+      });
+      el.addEventListener('mouseleave', function(){
+        el.style.transition = 'transform .5s cubic-bezier(.22,1,.36,1)';
+        el.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale(1)';
+      });
+    }
+    if(canHoverTilt){
+      attachTilt(document.getElementById('dashTilt'), 5, 1.01);
+    }
+
+    /* =================================================================
+       COUNT-UP: hero "portfolio health" stat (fires when in view)
+       ================================================================= */
+    function animateCount(el, target, duration){
+      var start = null;
+      function step(ts){
+        if(!start) start = ts;
+        var progress = Math.min((ts - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target);
+        if(progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    var dashEl = document.getElementById('dash');
+    var healthValueEl = document.getElementById('healthValue');
+    if(dashEl && healthValueEl){
+      var healthAnimated = false;
+      function checkHealth(){
+        if(healthAnimated || prefersReducedMotion) return;
+        var rect = dashEl.getBoundingClientRect();
+        if(rect.top < window.innerHeight * 0.9){
+          healthAnimated = true;
+          /* Held back so the number counts up as the card finishes landing */
+          setTimeout(function(){ animateCount(healthValueEl, 84, 1200); }, 700);
+        }
+      }
+      if(prefersReducedMotion){
+        healthValueEl.textContent = '84';
+      } else {
+        window.addEventListener('scroll', checkHealth, {passive:true});
+        window.addEventListener('load', checkHealth);
+        checkHealth();
+      }
+    }
+
+    /* =================================================================
+       NEW: TRUST STRIP — the one deliberate scroll-triggered moment
+       Items stagger in across the divided strip when it enters view.
+       ================================================================= */
+    var trustStrip = document.getElementById('trustStrip');
+    if(trustStrip){
+      if(prefersReducedMotion || !('IntersectionObserver' in window)){
+        trustStrip.classList.add('in');
+      } else {
+        var stripObserver = new IntersectionObserver(function(entries, obs){
+          entries.forEach(function(entry){
+            if(entry.isIntersecting){
+              entry.target.classList.add('in');
+              obs.unobserve(entry.target);
+            }
+          });
+        }, { threshold:0.2 });
+        stripObserver.observe(trustStrip);
+      }
+    }
+
+    /* =================================================================
+       REVEAL-ON-SCROLL
+       ================================================================= */
+    function revealElements(){
+      document.querySelectorAll('.reveal').forEach(function(el){
+        var rect = el.getBoundingClientRect();
+        if(rect.top < window.innerHeight * 0.92){
+          el.classList.add('show');
         }
       });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(function (el) { observer.observe(el); });
+    }
+    window.addEventListener('scroll', revealElements, {passive:true});
+    window.addEventListener('load', revealElements);
+    revealElements();
   </script>
 </body>
 </html>
