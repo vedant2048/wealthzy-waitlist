@@ -16,7 +16,8 @@
      9. 3D tilt (dashboard card only)
     10. Count-up: portfolio health
     11. Trust strip scroll reveal
-    12. Reveal-on-scroll
+    12. Brand showcase carousel (autoplay, hover-to-pause-and-blur)
+    13. Reveal-on-scroll
    ===================================================================== */
 
 /* =================================================================
@@ -308,6 +309,89 @@ if(trustStrip){
     stripObserver.observe(trustStrip);
   }
 }
+
+/* =================================================================
+   BRAND SHOWCASE CAROUSEL
+   Crossfades through all 5 campaign images every 5s. Hovering, or
+   keyboard-focusing an arrow/dot, pauses the timer and adds
+   body.banner-focus, which blurs the rest of the page (see styles.css)
+   so the showcase reads as the focal point instead of a strip that was
+   just dropped on the layout.
+   ================================================================= */
+(function(){
+  var slider = document.getElementById('bannerSlider');
+  if(!slider) return;
+
+  var slides = Array.prototype.slice.call(slider.querySelectorAll('.banner-slide'));
+  var dots = Array.prototype.slice.call(slider.querySelectorAll('.banner-dot'));
+  var prevBtn = document.getElementById('bannerPrev');
+  var nextBtn = document.getElementById('bannerNext');
+  var current = 0;
+  var timer = null;
+  var DELAY = 5000;
+
+  function goTo(index){
+    var nextIndex = (index + slides.length) % slides.length;
+    if(nextIndex === current) return;
+    var prevIndex = current;
+
+    slides[prevIndex].classList.remove('is-active');
+    slides[prevIndex].classList.add('is-prev');
+    slides[nextIndex].classList.remove('is-prev');
+    slides[nextIndex].classList.add('is-active');
+
+    if(dots[prevIndex]){ dots[prevIndex].classList.remove('is-active'); dots[prevIndex].setAttribute('aria-selected', 'false'); }
+    if(dots[nextIndex]){ dots[nextIndex].classList.add('is-active'); dots[nextIndex].setAttribute('aria-selected', 'true'); }
+
+    current = nextIndex;
+    /* Clears the outgoing slide's "slide out to the left" position once
+       its fade has finished, so it's ready to enter from the right next time. */
+    setTimeout(function(){ slides[prevIndex].classList.remove('is-prev'); }, 950);
+  }
+
+  function nextSlide(){ goTo(current + 1); }
+  function prevSlide(){ goTo(current - 1); }
+
+  function startAutoplay(){
+    stopAutoplay();
+    if(prefersReducedMotion) return;
+    timer = setInterval(nextSlide, DELAY);
+  }
+  function stopAutoplay(){
+    if(timer){ clearInterval(timer); timer = null; }
+  }
+
+  dots.forEach(function(dot, i){
+    dot.addEventListener('click', function(){ goTo(i); startAutoplay(); });
+  });
+  if(nextBtn) nextBtn.addEventListener('click', function(){ nextSlide(); startAutoplay(); });
+  if(prevBtn) prevBtn.addEventListener('click', function(){ prevSlide(); startAutoplay(); });
+
+  function enterFocus(){
+    stopAutoplay();
+    document.body.classList.add('banner-focus');
+  }
+  function exitFocus(){
+    document.body.classList.remove('banner-focus');
+    startAutoplay();
+  }
+
+  slider.addEventListener('mouseenter', enterFocus);
+  slider.addEventListener('mouseleave', exitFocus);
+  slider.addEventListener('focusin', enterFocus);
+  slider.addEventListener('focusout', function(event){
+    if(slider.contains(event.relatedTarget)) return;  // focus moved within the slider — stay paused
+    exitFocus();
+  });
+
+  /* Don't pile up slide changes while the tab is in the background */
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden) stopAutoplay();
+    else if(!document.body.classList.contains('banner-focus')) startAutoplay();
+  });
+
+  startAutoplay();
+})();
 
 /* =================================================================
    REVEAL-ON-SCROLL
