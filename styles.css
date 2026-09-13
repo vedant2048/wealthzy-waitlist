@@ -346,10 +346,6 @@
   .cta-card, footer, .modal-content, .metric, .field input{
     transition:background-color .35s ease, color .35s ease, border-color .35s ease;
   }
-  @media(prefers-reduced-motion: reduce){
-    body, #navbar, .dash-frame, .dash-panel, .step, .insight-card, .trust-strip,
-    .cta-card, footer, .modal-content, .metric, .field input{ transition:none; }
-  }
 
   /* =====================================================================
      BASE / RESET
@@ -433,13 +429,6 @@
   body.loaded .hero-seq > *:nth-child(4){ animation-delay:.40s; }
   .hero-seq-late{ opacity:0; transform:translateY(26px); }
   body.loaded .hero-seq-late{ animation:heroIn 1s cubic-bezier(.22,1,.36,1) .58s forwards; }
-
-  @media(prefers-reduced-motion: reduce){
-    *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
-    .reveal{ opacity:1; transform:none; }
-    .hero-seq > *, .hero-seq-late{ opacity:1 !important; transform:none !important; }
-    .trust-strip .trust-item{ opacity:1 !important; transform:none !important; }
-  }
 
   /* =====================================================================
      HEADER / NAV
@@ -717,6 +706,23 @@
   @media(min-width:641px) and (max-width:1024px){ .banner{ max-height:400px; } }
   @media(max-width:640px){ .banner{ max-height:240px; } }
 
+  /* .banner-section (top, right after "How it works") swaps its content
+     by breakpoint rather than hiding itself: .banner-desktop (5 images)
+     on desktop/tablet, .banner-mobile-top (3 images) on mobile — same
+     slot either way, so there's no empty gap and nothing to stack.
+     .banner-mobile-section (bottom, between Trust and the final CTA) is
+     a second, separate mobile-only carousel — hidden entirely above
+     640px so it doesn't add empty section padding there. */
+  .banner-mobile-top{ display:none; }
+  .banner-mobile-section{ display:none; }
+  @media(max-width:640px){
+    .banner-desktop{ display:none; }
+    .banner-mobile-top{ display:block; }
+    .banner-mobile-top .banner{ max-height:220px; }
+    .banner-mobile-section{ display:block; }
+    .banner-mobile-section .banner{ max-height:220px; }
+  }
+
   .banner-track{ position:relative; width:100%; height:100%; }
   .banner-slide{
     position:absolute; inset:0; margin:0;
@@ -727,20 +733,24 @@
   .banner-slide.is-active{ opacity:1; transform:translateX(0); pointer-events:auto; z-index:2; }
   .banner-slide.is-prev{ transform:translateX(-3%); }
   .banner-slide img{ width:100%; height:100%; display:block; object-fit:cover; object-position:center; }
-  @media(prefers-reduced-motion: reduce){
-    .banner-slide{ transition:opacity .01ms ease; transform:none !important; }
-  }
 
-  /* Prev / next arrows — hidden until the frame is hovered or focused */
+  /* Prev / next arrows.
+     Desktop (>=1025px, real pointer): hidden until the frame is hovered
+     or focused. Mobile/tablet (<=1024px): always visible, since there's
+     no hover to reveal them with — and no hover-driven pause to get
+     stuck "on" from a tap either (see the banner-focus block below). */
   .banner-arrow{
     position:absolute; top:50%; transform:translateY(-50%);
     width:40px; height:40px; border-radius:999px; z-index:5;
     display:flex; align-items:center; justify-content:center;
     background:rgba(10,9,8,.45); border:1px solid rgba(255,255,255,.22); color:#fff;
-    opacity:0; transition:opacity .25s ease, background .2s ease, transform .2s ease;
+    opacity:1; transition:opacity .25s ease, background .2s ease, transform .2s ease;
     backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
   }
-  .banner:hover .banner-arrow, .banner:focus-within .banner-arrow{ opacity:1; }
+  @media(min-width:1025px){
+    .banner-arrow{ opacity:0; }
+    .banner:hover .banner-arrow, .banner:focus-within .banner-arrow{ opacity:1; }
+  }
   .banner-arrow.prev{ left:14px; }
   .banner-arrow.next{ right:14px; }
   .banner-arrow:hover{ background:rgba(10,9,8,.68); transform:translateY(-50%) scale(1.06); }
@@ -761,23 +771,25 @@
   .banner-dot:hover{ background:var(--royal-soft); }
   .banner-dot.is-active{ width:26px; background:var(--royal); }
 
-  /* Hover / keyboard-focus: pause autoplay (script.js) and blur the
-     rest of the page so the showcase reads as the focal point. */
-  #navbar, main > section, footer{
-    transition:filter .5s ease, opacity .5s ease;
-  }
-  body.banner-focus #navbar,
-  body.banner-focus main > section:not(.banner-section),
-  body.banner-focus footer{
-    filter:blur(7px);
-    opacity:.55;
-  }
-  body.banner-focus .banner-frame{
-    box-shadow:0 36px 110px rgba(1,1,0,.6), 0 0 0 1px var(--accent-border-soft);
-    transform:translateY(-2px);
-  }
-  @media(prefers-reduced-motion: reduce){
-    #navbar, main > section, footer{ transition:none; }
+  /* Hover / keyboard-focus: pause autoplay (script.js) and blur the rest
+     of the page so the showcase reads as the focal point. Desktop only
+     (>=1025px) — on mobile/tablet a tap has no real "leave" event, so
+     hover-to-pause gets stuck on and the carousel never advances again.
+     script.js gates the pause/blur behaviour behind the same breakpoint. */
+  @media(min-width:1025px){
+    #navbar, main > section, footer{
+      transition:filter .5s ease, opacity .5s ease;
+    }
+    body.banner-focus #navbar,
+    body.banner-focus main > section:not(.banner-section),
+    body.banner-focus footer{
+      filter:blur(7px);
+      opacity:.55;
+    }
+    body.banner-focus .banner-frame{
+      box-shadow:0 36px 110px rgba(1,1,0,.6), 0 0 0 1px var(--accent-border-soft);
+      transform:translateY(-2px);
+    }
   }
 
   /* =====================================================================

@@ -16,7 +16,8 @@
      9. 3D tilt (dashboard card only)
     10. Count-up: portfolio health
     11. Trust strip scroll reveal
-    12. Brand showcase carousel (autoplay, hover-to-pause-and-blur)
+    12. Brand showcase carousel(s) — 1 on desktop/tablet, 2 on mobile
+        (autoplay; hover-to-pause-and-blur is desktop-only)
     13. Reveal-on-scroll
    ===================================================================== */
 
@@ -189,9 +190,10 @@ window.addEventListener('resize', function(){
 
 /* =================================================================
    MOTION PREFERENCES
+   Animations always run at full motion, regardless of the OS/browser
+   prefers-reduced-motion setting — intentionally not read here.
    ================================================================= */
-var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-var canHoverTilt = window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReducedMotion;
+var canHoverTilt = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 /* =================================================================
    NEW: HERO PAGE-LOAD SEQUENCE
@@ -219,7 +221,7 @@ function updateOnScroll(){
   var pct = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
   if(scrollProgressEl) scrollProgressEl.style.width = pct + '%';
   if(navbarEl) navbarEl.classList.toggle('scrolled', scrollY > 20);
-  if(!prefersReducedMotion && heroGlow){
+  if(heroGlow){
     heroGlow.style.transform = 'translateX(-50%) translateY(' + (scrollY * 0.16) + 'px)';
   }
   scrollTicking = false;
@@ -272,7 +274,7 @@ var healthValueEl = document.getElementById('healthValue');
 if(dashEl && healthValueEl){
   var healthAnimated = false;
   function checkHealth(){
-    if(healthAnimated || prefersReducedMotion) return;
+    if(healthAnimated) return;
     var rect = dashEl.getBoundingClientRect();
     if(rect.top < window.innerHeight * 0.9){
       healthAnimated = true;
@@ -280,13 +282,9 @@ if(dashEl && healthValueEl){
       setTimeout(function(){ animateCount(healthValueEl, 84, 1200); }, 700);
     }
   }
-  if(prefersReducedMotion){
-    healthValueEl.textContent = '84';
-  } else {
-    window.addEventListener('scroll', checkHealth, {passive:true});
-    window.addEventListener('load', checkHealth);
-    checkHealth();
-  }
+  window.addEventListener('scroll', checkHealth, {passive:true});
+  window.addEventListener('load', checkHealth);
+  checkHealth();
 }
 
 /* =================================================================
@@ -295,7 +293,7 @@ if(dashEl && healthValueEl){
    ================================================================= */
 var trustStrip = document.getElementById('trustStrip');
 if(trustStrip){
-  if(prefersReducedMotion || !('IntersectionObserver' in window)){
+  if(!('IntersectionObserver' in window)){
     trustStrip.classList.add('in');
   } else {
     var stripObserver = new IntersectionObserver(function(entries, obs){
@@ -311,24 +309,49 @@ if(trustStrip){
 }
 
 /* =================================================================
-   BRAND SHOWCASE CAROUSEL
-   Crossfades through all 5 campaign images every 5s. Hovering, or
-   keyboard-focusing an arrow/dot, pauses the timer and adds
-   body.banner-focus, which blurs the rest of the page (see styles.css)
-   so the showcase reads as the focal point instead of a strip that was
-   just dropped on the layout.
+   BRAND SHOWCASE CAROUSEL(S)
+   initCarousel() drives one carousel instance — crossfading its own
+   slides every 5s. Three instances run on the page, no two ever
+   stacked together:
+     - #bannerSlider           desktop/tablet, all 5 images (top section,
+                               right after "How it works")
+     - #bannerSliderMobileA    mobile only, pg1/pg3/pg5 — swaps into that
+                               SAME top section/slot in place of #bannerSlider
+     - #bannerSliderMobileB    mobile only, pg2/pg4, in its own separate
+                               section between Trust and the final CTA,
+                               started 2.5s later so it's never mid-change
+                               in sync with #bannerSliderMobileA
+   `visibleQuery` stops an instance's timer while its breakpoint content
+   is display:none (see .banner-desktop / .banner-mobile-top /
+   .banner-mobile-section in styles.css), so a hidden carousel doesn't
+   keep ticking in the background.
+   `hoverPauseQuery` is passed only for the desktop instance: hovering,
+   or keyboard-focusing an arrow/dot, pauses its timer and adds
+   body.banner-focus (blurs the rest of the page — see styles.css) so
+   the showcase reads as the focal point. It's intentionally left off
+   the mobile instances — on a touch screen a tap fires a synthetic
+   hover with no matching "leave" event, so hover-to-pause would get
+   stuck on forever and the carousel would never advance again.
    ================================================================= */
-(function(){
-  var slider = document.getElementById('bannerSlider');
-  if(!slider) return;
+function initCarousel(frame, opts){
+  if(!frame) return;
+  opts = opts || {};
 
-  var slides = Array.prototype.slice.call(slider.querySelectorAll('.banner-slide'));
-  var dots = Array.prototype.slice.call(slider.querySelectorAll('.banner-dot'));
-  var prevBtn = document.getElementById('bannerPrev');
-  var nextBtn = document.getElementById('bannerNext');
+  var slides = Array.prototype.slice.call(frame.querySelectorAll('.banner-slide'));
+  var dots = Array.prototype.slice.call(frame.querySelectorAll('.banner-dot'));
+  var prevBtn = frame.querySelector('.banner-arrow.prev');
+  var nextBtn = frame.querySelector('.banner-arrow.next');
+  if(slides.length < 2) return;
+
   var current = 0;
   var timer = null;
   var DELAY = 5000;
+
+  var visibleMQ = opts.visibleQuery ? window.matchMedia(opts.visibleQuery) : null;
+  var hoverPauseMQ = opts.hoverPauseQuery ? window.matchMedia(opts.hoverPauseQuery) : null;
+
+  function isVisible(){ return !visibleMQ || visibleMQ.matches; }
+  function hoverPauseEnabled(){ return !!hoverPauseMQ && hoverPauseMQ.matches; }
 
   function goTo(index){
     var nextIndex = (index + slides.length) % slides.length;
@@ -352,13 +375,24 @@ if(trustStrip){
   function nextSlide(){ goTo(current + 1); }
   function prevSlide(){ goTo(current - 1); }
 
+  function stopAutoplay(){
+    if(timer){ clearInterval(timer); clearTimeout(timer); timer = null; }
+  }
   function startAutoplay(){
     stopAutoplay();
-    if(prefersReducedMotion) return;
+    if(!isVisible()) return;
     timer = setInterval(nextSlide, DELAY);
   }
-  function stopAutoplay(){
-    if(timer){ clearInterval(timer); timer = null; }
+  /* Only used for the very first kickoff, to desync opts.startDelay ms
+     from whatever else is running (e.g. the other mobile carousel). */
+  function kickoff(){
+    stopAutoplay();
+    if(!isVisible()) return;
+    if(opts.startDelay){
+      timer = setTimeout(function(){ nextSlide(); startAutoplay(); }, opts.startDelay);
+    } else {
+      startAutoplay();
+    }
   }
 
   dots.forEach(function(dot, i){
@@ -368,6 +402,7 @@ if(trustStrip){
   if(prevBtn) prevBtn.addEventListener('click', function(){ prevSlide(); startAutoplay(); });
 
   function enterFocus(){
+    if(!hoverPauseEnabled()) return;
     stopAutoplay();
     document.body.classList.add('banner-focus');
   }
@@ -376,11 +411,11 @@ if(trustStrip){
     startAutoplay();
   }
 
-  slider.addEventListener('mouseenter', enterFocus);
-  slider.addEventListener('mouseleave', exitFocus);
-  slider.addEventListener('focusin', enterFocus);
-  slider.addEventListener('focusout', function(event){
-    if(slider.contains(event.relatedTarget)) return;  // focus moved within the slider — stay paused
+  frame.addEventListener('mouseenter', enterFocus);
+  frame.addEventListener('mouseleave', exitFocus);
+  frame.addEventListener('focusin', enterFocus);
+  frame.addEventListener('focusout', function(event){
+    if(frame.contains(event.relatedTarget)) return;  // focus moved within the frame — stay paused
     exitFocus();
   });
 
@@ -390,8 +425,36 @@ if(trustStrip){
     else if(!document.body.classList.contains('banner-focus')) startAutoplay();
   });
 
-  startAutoplay();
-})();
+  /* Crossing a breakpoint hides/shows this instance's group — start 
+     stop its timer to match, and always drop any stuck hover-pause. */
+  if(visibleMQ){
+    var onVisibleChange = function(){
+      exitFocus();
+      startAutoplay();
+    };
+    if(visibleMQ.addEventListener) visibleMQ.addEventListener('change', onVisibleChange);
+    else if(visibleMQ.addListener) visibleMQ.addListener(onVisibleChange); // older Safari
+  }
+  if(hoverPauseMQ){
+    var onHoverPauseChange = function(e){ if(!e.matches) exitFocus(); };
+    if(hoverPauseMQ.addEventListener) hoverPauseMQ.addEventListener('change', onHoverPauseChange);
+    else if(hoverPauseMQ.addListener) hoverPauseMQ.addListener(onHoverPauseChange);
+  }
+
+  kickoff();
+}
+
+initCarousel(document.getElementById('bannerSlider'), {
+  visibleQuery: '(min-width: 641px)',
+  hoverPauseQuery: '(min-width: 1025px)'
+});
+initCarousel(document.getElementById('bannerSliderMobileA'), {
+  visibleQuery: '(max-width: 640px)'
+});
+initCarousel(document.getElementById('bannerSliderMobileB'), {
+  visibleQuery: '(max-width: 640px)',
+  startDelay: 2500
+});
 
 /* =================================================================
    REVEAL-ON-SCROLL
