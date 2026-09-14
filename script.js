@@ -457,7 +457,9 @@ initCarousel(document.getElementById('bannerSliderMobileB'), {
 });
 
 /* =================================================================
-   REVEAL-ON-SCROLL
+   REVEAL-ON-SCROLL new 
+   feature with motion
+   
    ================================================================= */
 function revealElements(){
   document.querySelectorAll('.reveal').forEach(function(el){
