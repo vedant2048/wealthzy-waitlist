@@ -189,7 +189,12 @@
       <!-- <div class="wrap"> -->
         <div class="banner-frame">
           <div class="banner">
-            <img src="images/pg1.png" width="2730" height="1536" loading="lazy" decoding="async"
+            <!-- Swapped per theme by applyTheme() in script.js: pg1.png
+                 (dark background) for dark mode, pg2.png (light/cream
+                 background) for light mode — same artwork, matched to
+                 whichever page background is showing. -->
+            <img id="bannerImg" src="images/pg1.png" data-dark-src="images/pg1.png" data-light-src="images/pg2.png"
+                 width="2730" height="1536" loading="lazy" decoding="async"
                  alt="WEALTHZY — Plan with clarity. A well-defined plan turns your dreams into achievable goals: buy a home, children's education, retirement, wealth creation, legacy planning.">
           </div>
         </div>

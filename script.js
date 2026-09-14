@@ -128,10 +128,21 @@ var themeIconMoon = document.getElementById('themeIconMoon');
 var themeIconSunMobile = document.getElementById('themeIconSunMobile');
 var themeIconMoonMobile = document.getElementById('themeIconMoonMobile');
 var themeToggleLabel = document.getElementById('themeToggleLabel');
+var bannerImg = document.getElementById('bannerImg');
 
 function applyTheme(theme){
   currentTheme = theme;
   document.documentElement.setAttribute('data-theme', theme);
+
+  /* Brand showcase image: pg1 (dark bg) in dark mode, pg2 (light bg)
+     in light mode — same artwork, matched to whichever page background
+     is showing (see index.html for the data-dark-src / data-light-src). */
+  if(bannerImg){
+    var wantedSrc = theme === 'light' ? bannerImg.dataset.lightSrc : bannerImg.dataset.darkSrc;
+    if(wantedSrc && bannerImg.getAttribute('src') !== wantedSrc){
+      bannerImg.src = wantedSrc;
+    }
+  }
 
   var goingToLight = (theme === 'dark');          // what the button will do next
   var label = goingToLight ? 'Switch to light mode' : 'Switch to dark mode';
