@@ -440,6 +440,29 @@
     transition:box-shadow .25s ease;
   }
   #navbar.scrolled{ box-shadow:var(--nav-shadow); }
+
+  /* Dark mode only: keep the nav BAR itself light so the (dark-ink)
+     logo stays clearly legible, instead of near-black-on-near-black.
+     Scoped to #navbar for --nav-bg/--nav-shadow (the bar's own paint)
+     but to .nav-inner for the ink tokens — #mobileMenu is a sibling of
+     .nav-inner, not a descendant, so its own dark background/text
+     (unrelated to --nav-bg) is untouched and stays legible when opened. */
+  :root:not([data-theme="light"]) #navbar{
+    --nav-bg:rgba(250,247,242,.92);
+    --nav-shadow:0 12px 40px rgba(40,31,22,.12);
+  }
+  :root:not([data-theme="light"]) #navbar .nav-inner{
+    --heading:#1A1713;
+    --text:#281F16;
+    --muted:#66655F;
+    --muted-dim:#6B5C53;
+    --line-soft:rgba(40,31,22,.14);
+    --line-strong:rgba(40,31,22,.32);
+    --elev-hairline:rgba(40,31,22,.08);
+    --elev-1:rgba(255,255,255,.72);
+    --elev-2:rgba(200,160,112,.24);
+  }
+
   .nav-inner{
     max-width:var(--container); margin:0 auto; padding:0 clamp(18px,4vw,32px);
     height:74px; display:flex; align-items:center; justify-content:space-between; gap:16px;
@@ -451,14 +474,14 @@
      Drop a file named FullLogo.png next to this HTML (or change the src).
      ===================================================================== */
   .logo-mark{
-    height:34px;      /* <-- ADJUST HEADER LOGO SIZE HERE (width scales automatically) */
+    height:35.7px;    /* <-- ADJUST HEADER LOGO SIZE HERE (34px + 5%; width scales automatically) */
     width:auto;
     max-width:170px;  /* <-- raise this if a wide logo gets clipped */
     display:block;
     object-fit:contain;
   }
   @media(max-width:480px){
-    .logo-mark{ height:28px; }   /* <-- ADJUST LOGO SIZE ON SMALL PHONES HERE */
+    .logo-mark{ height:29.4px; }   /* <-- ADJUST LOGO SIZE ON SMALL PHONES HERE (28px + 5%) */
   }
   .footer-brand .logo-mark{
     height:30px;                 /* <-- ADJUST FOOTER LOGO SIZE HERE (independent of header) */
