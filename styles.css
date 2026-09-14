@@ -677,120 +677,32 @@
 
 
   /* =====================================================================
-     BRAND SHOWCASE — framed, auto-advancing carousel
-     The frame mirrors .dash-frame's matted-photo treatment (padded
-     border, rounded corners, soft shadow) and sits inside .wrap like
-     every other section, so it reads as a designed panel rather than a
-     raw image dropped on the page. The carousel's own height still
-     comes from aspect-ratio + a per-breakpoint max-height cap, so it
-     scales with the viewport instead of using a fixed pixel size.
+     BRAND SHOWCASE — one static image (images/pg1.png)
+     No border, no padded "mat", and its background matches the page
+     background exactly — so it reads as embedded in the page rather
+     than a separate bordered card sitting on top of it. The frame's
+     own height comes from aspect-ratio + a per-breakpoint max-height
+     cap, so it resizes smoothly across desktop, tablet and mobile
+     instead of using a fixed pixel size.
      ===================================================================== */
-  .banner-frame{
+  /* .banner-frame{
     position:relative;
-    background:var(--dash-frame-bg);
-    border:1px solid var(--line-soft);
+    background:var(--bg);
     border-radius:var(--r-lg);
-    padding:10px;
-    box-shadow:var(--shadow-royal);
-    transition:box-shadow .45s ease, transform .45s ease;
+    box-shadow:var(--shadow-royal); */
   }
   .banner{
     position:relative;
     width:100%;
     aspect-ratio:16/9;
     max-height:560px;                 /* desktop cap */
-    border-radius:calc(var(--r-lg) - 10px);
+    border-radius:var(--r-lg);
     overflow:hidden;
-    background:var(--surface);
+    background:var(--bg);
   }
+  .banner img{ width:100%; height:100%; display:block; object-fit:cover; object-position:center; }
   @media(min-width:641px) and (max-width:1024px){ .banner{ max-height:400px; } }
   @media(max-width:640px){ .banner{ max-height:240px; } }
-
-  /* .banner-section (top, right after "How it works") swaps its content
-     by breakpoint rather than hiding itself: .banner-desktop (5 images)
-     on desktop/tablet, .banner-mobile-top (3 images) on mobile — same
-     slot either way, so there's no empty gap and nothing to stack.
-     .banner-mobile-section (bottom, between Trust and the final CTA) is
-     a second, separate mobile-only carousel — hidden entirely above
-     640px so it doesn't add empty section padding there. */
-  .banner-mobile-top{ display:none; }
-  .banner-mobile-section{ display:none; }
-  @media(max-width:640px){
-    .banner-desktop{ display:none; }
-    .banner-mobile-top{ display:block; }
-    .banner-mobile-top .banner{ max-height:220px; }
-    .banner-mobile-section{ display:block; }
-    .banner-mobile-section .banner{ max-height:220px; }
-  }
-
-  .banner-track{ position:relative; width:100%; height:100%; }
-  .banner-slide{
-    position:absolute; inset:0; margin:0;
-    opacity:0; transform:translateX(3%);
-    transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1);
-    pointer-events:none;
-  }
-  .banner-slide.is-active{ opacity:1; transform:translateX(0); pointer-events:auto; z-index:2; }
-  .banner-slide.is-prev{ transform:translateX(-3%); }
-  .banner-slide img{ width:100%; height:100%; display:block; object-fit:cover; object-position:center; }
-
-  /* Prev / next arrows.
-     Desktop (>=1025px, real pointer): hidden until the frame is hovered
-     or focused. Mobile/tablet (<=1024px): always visible, since there's
-     no hover to reveal them with — and no hover-driven pause to get
-     stuck "on" from a tap either (see the banner-focus block below). */
-  .banner-arrow{
-    position:absolute; top:50%; transform:translateY(-50%);
-    width:40px; height:40px; border-radius:999px; z-index:5;
-    display:flex; align-items:center; justify-content:center;
-    background:rgba(10,9,8,.45); border:1px solid rgba(255,255,255,.22); color:#fff;
-    opacity:1; transition:opacity .25s ease, background .2s ease, transform .2s ease;
-    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-  }
-  @media(min-width:1025px){
-    .banner-arrow{ opacity:0; }
-    .banner:hover .banner-arrow, .banner:focus-within .banner-arrow{ opacity:1; }
-  }
-  .banner-arrow.prev{ left:14px; }
-  .banner-arrow.next{ right:14px; }
-  .banner-arrow:hover{ background:rgba(10,9,8,.68); transform:translateY(-50%) scale(1.06); }
-  .banner-arrow:active{ transform:translateY(-50%) scale(.94); }
-  .banner-arrow svg{ width:18px; height:18px; }
-
-  /* Dot indicators — part of the frame's own chrome (below the photo),
-     never overlaid on the artwork, styled with the page's own tokens */
-  .banner-dots{
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    margin-top:13px; padding-bottom:2px;
-  }
-  .banner-dot{
-    width:8px; height:8px; border-radius:999px; padding:0; border:0;
-    background:var(--line-strong);
-    transition:width .3s ease, background .3s ease;
-  }
-  .banner-dot:hover{ background:var(--royal-soft); }
-  .banner-dot.is-active{ width:26px; background:var(--royal); }
-
-  /* Hover / keyboard-focus: pause autoplay (script.js) and blur the rest
-     of the page so the showcase reads as the focal point. Desktop only
-     (>=1025px) — on mobile/tablet a tap has no real "leave" event, so
-     hover-to-pause gets stuck on and the carousel never advances again.
-     script.js gates the pause/blur behaviour behind the same breakpoint. */
-  @media(min-width:1025px){
-    #navbar, main > section, footer{
-      transition:filter .5s ease, opacity .5s ease;
-    }
-    body.banner-focus #navbar,
-    body.banner-focus main > section:not(.banner-section),
-    body.banner-focus footer{
-      filter:blur(7px);
-      opacity:.55;
-    }
-    body.banner-focus .banner-frame{
-      box-shadow:0 36px 110px rgba(1,1,0,.6), 0 0 0 1px var(--accent-border-soft);
-      transform:translateY(-2px);
-    }
-  }
 
   /* =====================================================================
      TRUST — one tidy divided strip, not three scattered cards

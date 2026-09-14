@@ -178,103 +178,22 @@
     </section>
 
     <!-- =================================================================
-         BRAND SHOWCASE (top) — framed, auto-advancing carousel.
-         Lives inside .wrap with a matted "frame" around it (same
-         treatment as .dash-frame) so it reads as a designed panel on
-         the page rather than a raw image strip bolted on.
-
-         Desktop/tablet (>=641px): the 5-image carousel (#bannerSlider).
-         Mobile (<=640px): a lighter 3-image carousel (#bannerSliderMobileA,
-         pg1/pg3/pg5) swaps in instead — same slot on the page, not
-         stacked with anything. A second, unrelated mobile-only carousel
-         (#bannerSliderMobileB, pg2/pg4) lives further down, between
-         Trust and the final CTA, on its own.
-         Hover-to-pause-and-blur only ever applies on desktop (>=1025px)
-         — see styles.css / script.js.
+         BRAND SHOWCASE — one static, full image (images/pg1.png), framed
+         (same matted-photo treatment as .dash-frame) so it reads as a
+         designed panel on the page. No carousel, no JS: the frame's own
+         height comes from aspect-ratio + a per-breakpoint max-height cap
+         (see .banner in styles.css), so it resizes smoothly across
+         desktop, tablet and mobile instead of using a fixed pixel size.
          ================================================================= -->
-    <section class="banner-section reveal" aria-label="WEALTHZY campaign gallery">
-      <div class="wrap">
-
-        <!-- Desktop / tablet: single 5-image carousel -->
-        <div class="banner-desktop">
-          <div class="banner-frame" id="bannerSlider">
-            <div class="banner">
-              <div class="banner-track">
-                <figure class="banner-slide is-active">
-                  <img src="images/pg1.jpeg" width="1600" height="900" loading="lazy" decoding="async"
-                       alt="WEALTHZY — A wealthier tomorrow begins today. Goal-based planning, unbiased advice, a brighter future.">
-                </figure>
-                <figure class="banner-slide">
-                  <img src="images/pg2.jpeg" width="1600" height="900" loading="lazy" decoding="async"
-                       alt="WEALTHZY — Plan with clarity. A well-defined plan turns your dreams into achievable goals: home, education, retirement, wealth creation, legacy.">
-                </figure>
-                <figure class="banner-slide">
-                  <img src="images/pg3.jpeg" width="1600" height="900" loading="lazy" decoding="async"
-                       alt="WEALTHZY — Invest with confidence. Disciplined investing backed by research and your unique goals.">
-                </figure>
-                <figure class="banner-slide">
-                  <img src="images/pg4.jpeg" width="1600" height="900" loading="lazy" decoding="async"
-                       alt="WEALTHZY — Build a legacy. What you build today should empower generations tomorrow.">
-                </figure>
-                <figure class="banner-slide">
-                  <img src="images/pg5.jpeg" width="1600" height="900" loading="lazy" decoding="async"
-                       alt="WEALTHZY — Your partner through every milestone. Unbiased, transparent, always by your side.">
-                </figure>
-              </div>
-              <button type="button" class="banner-arrow prev" aria-label="Previous slide">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 6l-6 6 6 6"/></svg>
-              </button>
-              <button type="button" class="banner-arrow next" aria-label="Next slide">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></svg>
-              </button>
-            </div>
-
-            <!-- Dots live in the frame's own chrome, below the photo, so
-                 they never collide with the artwork baked into each slide. -->
-            <div class="banner-dots" role="tablist" aria-label="Choose slide">
-              <button type="button" class="banner-dot is-active" role="tab" aria-selected="true" aria-label="Slide 1 of 5"></button>
-              <button type="button" class="banner-dot" role="tab" aria-selected="false" aria-label="Slide 2 of 5"></button>
-              <button type="button" class="banner-dot" role="tab" aria-selected="false" aria-label="Slide 3 of 5"></button>
-              <button type="button" class="banner-dot" role="tab" aria-selected="false" aria-label="Slide 4 of 5"></button>
-              <button type="button" class="banner-dot" role="tab" aria-selected="false" aria-label="Slide 5 of 5"></button>
-            </div>
+    <section class="banner-section reveal" aria-label="WEALTHZY">
+      <!-- <div class="wrap"> -->
+        <div class="banner-frame">
+          <div class="banner">
+            <img src="images/pg1.png" width="2730" height="1536" loading="lazy" decoding="async"
+                 alt="WEALTHZY — Plan with clarity. A well-defined plan turns your dreams into achievable goals: buy a home, children's education, retirement, wealth creation, legacy planning.">
           </div>
         </div>
-
-        <!-- Mobile only: same slot, lighter 3-image carousel -->
-        <div class="banner-mobile-top">
-          <div class="banner-frame" id="bannerSliderMobileA" aria-label="WEALTHZY gallery, set 1">
-            <div class="banner">
-              <div class="banner-track">
-                <figure class="banner-slide is-active">
-                  <img src="images/pg1.jpeg" width="1600" height="900" loading="lazy" decoding="async"
-                       alt="WEALTHZY — A wealthier tomorrow begins today. Goal-based planning, unbiased advice, a brighter future.">
-                </figure>
-                <figure class="banner-slide">
-                  <img src="images/pg3.jpeg" width="1600" height="900" loading="lazy" decoding="async"
-                       alt="WEALTHZY — Invest with confidence. Disciplined investing backed by research and your unique goals.">
-                </figure>
-                <figure class="banner-slide">
-                  <img src="images/pg5.jpeg" width="1600" height="900" loading="lazy" decoding="async"
-                       alt="WEALTHZY — Your partner through every milestone. Unbiased, transparent, always by your side.">
-                </figure>
-              </div>
-              <button type="button" class="banner-arrow prev" aria-label="Previous slide">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 6l-6 6 6 6"/></svg>
-              </button>
-              <button type="button" class="banner-arrow next" aria-label="Next slide">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></svg>
-              </button>
-            </div>
-            <div class="banner-dots" role="tablist" aria-label="Choose slide">
-              <button type="button" class="banner-dot is-active" role="tab" aria-selected="true" aria-label="Slide 1 of 3"></button>
-              <button type="button" class="banner-dot" role="tab" aria-selected="false" aria-label="Slide 2 of 3"></button>
-              <button type="button" class="banner-dot" role="tab" aria-selected="false" aria-label="Slide 3 of 3"></button>
-            </div>
-          </div>
-        </div>
-
-      </div>
+      <!-- </div> -->
     </section>
 
     <!-- =================================================================
@@ -334,43 +253,6 @@
           <div class="trust-item">
             <h4>Your data stays yours</h4>
             <p>Encrypted in transit and at rest. We'll only ever email you about your place in line.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =================================================================
-         BRAND SHOWCASE (bottom) — a second, unrelated mobile-only
-         carousel (pg2/pg4), on its own — not stacked with the one near
-         the top of the page. Mobile-only (<=640px) — display:none above
-         that, see .banner-mobile-section in styles.css. Driven by
-         script.js's initCarousel(), same as the others, just without
-         hover-to-pause (see styles.css / script.js for why).
-         ================================================================= -->
-    <section class="banner-mobile-section reveal" aria-label="WEALTHZY campaign gallery">
-      <div class="wrap">
-        <div class="banner-frame" id="bannerSliderMobileB" aria-label="WEALTHZY gallery, set 2">
-          <div class="banner">
-            <div class="banner-track">
-              <figure class="banner-slide is-active">
-                <img src="images/pg2.jpeg" width="1600" height="900" loading="lazy" decoding="async"
-                     alt="WEALTHZY — Plan with clarity. A well-defined plan turns your dreams into achievable goals: home, education, retirement, wealth creation, legacy.">
-              </figure>
-              <figure class="banner-slide">
-                <img src="images/pg4.jpeg" width="1600" height="900" loading="lazy" decoding="async"
-                     alt="WEALTHZY — Build a legacy. What you build today should empower generations tomorrow.">
-              </figure>
-            </div>
-            <button type="button" class="banner-arrow prev" aria-label="Previous slide">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 6l-6 6 6 6"/></svg>
-            </button>
-            <button type="button" class="banner-arrow next" aria-label="Next slide">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></svg>
-            </button>
-          </div>
-          <div class="banner-dots" role="tablist" aria-label="Choose slide">
-            <button type="button" class="banner-dot is-active" role="tab" aria-selected="true" aria-label="Slide 1 of 2"></button>
-            <button type="button" class="banner-dot" role="tab" aria-selected="false" aria-label="Slide 2 of 2"></button>
           </div>
         </div>
       </div>
